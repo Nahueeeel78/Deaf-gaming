@@ -2262,6 +2262,204 @@ async function checkMagicLinkToken(){
   return false;
 }
 
+// ══════════════════════════════════════
+// CONTACTOS REALES + CHAT + VIDEOLLAMADA
+// ══════════════════════════════════════
+var currentChatUserId = null;
+var realtimeChannel = null;
+var peerConn = null;
+var localStream = null;
+
+// Cargar contactos desde Supabase
+async function sbLoadContacts() {
+  if (!SB_READY || !currentUserId) return;
+  try {
+    var r = await sb.from('profiles').select('*').neq('id', currentUserId).limit(50);
+    if (!r.data || r.data.length === 0) return;
+    var cl = document.getElementById('chatList');
+    var empty = document.getElementById('chatListEmpty');
+    if (empty) empty.style.display = 'none';
+    r.data.forEach(function(profile) {
+      if (document.getElementById('contact-'+profile.id)) return;
+      var div = document.createElement('div');
+      div.className = 'cr';
+      div.id = 'contact-'+profile.id;
+      div.style.cursor = 'pointer';
+      div.innerHTML =
+        '<div class="crav" style="font-size:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--c),var(--p));">'+(profile.avatar||'🧑')+'</div>'+
+        '<div class="crb">'+
+          '<div class="crn">'+(profile.name||'Usuario')+'</div>'+
+          '<div class="crs" id="last-msg-'+profile.id+'">Toca para chatear</div>'+
+        '</div>';
+      div.onclick = function() { openRealChat(profile.id, profile.name||'Usuario', profile.avatar||'🧑'); };
+      if (cl) cl.appendChild(div);
+    });
+  } catch(e) { console.error('Load contacts:', e); }
+}
+
+// Abrir chat real con un contacto
+async function openRealChat(userId, name, avatar) {
+  currentChatUserId = userId;
+  var cdName = document.getElementById('cd-name');
+  var cdAv = document.getElementById('cd-av');
+  if (cdName) cdName.textContent = name;
+  if (cdAv) cdAv.textContent = avatar;
+  // Clear messages
+  var msgArea = document.getElementById('msgArea');
+  if (msgArea) msgArea.innerHTML = '<div style="text-align:center;padding:30px 16px;color:var(--tm);font-size:12px;">\uD83D\uDD12 Los mensajes son privados</div>';
+  // Show chat screen
+  document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
+  var chatSc = document.getElementById('sc-chat');
+  if (chatSc) chatSc.classList.add('active');
+  // Load history + subscribe
+  await sbLoadMessages(userId);
+  sbSubscribeMessages(userId);
+  setTimeout(function(){
+    var inp = document.getElementById('minp'); if(inp) inp.focus();
+  }, 300);
+}
+
+// Cargar historial de mensajes
+async function sbLoadMessages(otherUserId) {
+  if (!SB_READY || !currentUserId) return;
+  try {
+    var r = await sb.from('messages')
+      .select('*')
+      .or('and(from_id.eq.'+currentUserId+',to_id.eq.'+otherUserId+'),and(from_id.eq.'+otherUserId+',to_id.eq.'+currentUserId+')')
+      .order('created_at', { ascending: true })
+      .limit(50);
+    if (r.data) r.data.forEach(function(msg){ renderSBMessage(msg); });
+    var ma = document.getElementById('msgArea'); if(ma) ma.scrollTop = ma.scrollHeight;
+  } catch(e) { console.error('Load messages:', e); }
+}
+
+// Suscribirse a mensajes nuevos en tiempo real
+function sbSubscribeMessages(otherUserId) {
+  if (realtimeChannel) { try{ sb.removeChannel(realtimeChannel); }catch(e){} }
+  realtimeChannel = sb.channel('msgs-'+currentUserId)
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'messages',
+      filter: 'to_id=eq.'+currentUserId
+    }, function(payload) {
+      if (payload.new.from_id === otherUserId) {
+        renderSBMessage(payload.new);
+        var ma = document.getElementById('msgArea'); if(ma) ma.scrollTop = ma.scrollHeight;
+      }
+    })
+    .subscribe();
+}
+
+// Mostrar un mensaje en pantalla
+function renderSBMessage(msg) {
+  var ma = document.getElementById('msgArea'); if(!ma) return;
+  var mine = msg.from_id === currentUserId;
+  var time = new Date(msg.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  var div = document.createElement('div');
+  div.className = 'mr' + (mine ? ' mine' : '');
+  div.innerHTML =
+    '<div class="mb" style="max-width:78%;padding:10px 14px;border-radius:'+(mine?'18px 18px 4px 18px':'18px 18px 18px 4px')+';font-size:14px;line-height:1.45;word-break:break-word;'+
+    (mine?'background:linear-gradient(135deg,var(--c),var(--p));color:#000;':'background:var(--bc);color:var(--tx);')+'">' +
+    '<div>'+escHtml(msg.content)+'</div>'+
+    '<div style="font-size:10px;opacity:.55;margin-top:3px;text-align:right;">'+time+(mine?' ✓✓':'')+'</div>'+
+    '</div>';
+  ma.appendChild(div);
+}
+
+function escHtml(t) {
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Enviar mensaje real
+async function sbSendMsg() {
+  if (!SB_READY || !currentUserId || !currentChatUserId) return false;
+  var inp = document.getElementById('minp');
+  var text = inp ? inp.value.trim() : '';
+  if (!text) return false;
+  inp.value = '';
+  inp.style.height = 'auto';
+  try {
+    var r = await sb.from('messages').insert({
+      from_id: currentUserId, to_id: currentChatUserId,
+      content: text, created_at: new Date().toISOString()
+    });
+    if (r.error) { toast('Error al enviar','error'); return false; }
+    renderSBMessage({ from_id: currentUserId, to_id: currentChatUserId, content: text, created_at: new Date().toISOString() });
+    var ma = document.getElementById('msgArea'); if(ma) ma.scrollTop = ma.scrollHeight;
+    return true;
+  } catch(e) { toast('Error: '+e.message,'error'); return false; }
+}
+
+// Override sendMsg to use Supabase when available
+var _origSendMsg = typeof sendMsg === 'function' ? sendMsg : null;
+function sendMsg() {
+  if (SB_READY && currentUserId && currentChatUserId) {
+    sbSendMsg();
+  } else if (_origSendMsg) {
+    _origSendMsg();
+  } else {
+    // Demo mode: show message locally
+    var inp = document.getElementById('minp');
+    var text = inp ? inp.value.trim() : ''; if(!text) return;
+    inp.value = ''; inp.style.height='auto';
+    renderSBMessage({ from_id: 'me', to_id: 'other', content: text, created_at: new Date().toISOString() });
+    var ma = document.getElementById('msgArea'); if(ma) ma.scrollTop = ma.scrollHeight;
+  }
+}
+
+// ══ VIDEOLLAMADA WEBRTC ══
+async function startRealVideoCall() {
+  if (!SB_READY || !currentChatUserId) {
+    openVC(); // fallback UI demo
+    return;
+  }
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    peerConn = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    localStream.getTracks().forEach(function(t){ peerConn.addTrack(t, localStream); });
+    peerConn.ontrack = function(e) {
+      var rv = document.getElementById('vcRemote'); if(rv) { rv.srcObject = e.streams[0]; rv.play(); }
+    };
+    peerConn.onicecandidate = async function(e) {
+      if(e.candidate) await sb.from('calls').insert({ from_id:currentUserId, to_id:currentChatUserId, type:'ice', data:JSON.stringify(e.candidate), created_at:new Date().toISOString() });
+    };
+    var offer = await peerConn.createOffer();
+    await peerConn.setLocalDescription(offer);
+    await sb.from('calls').insert({ from_id:currentUserId, to_id:currentChatUserId, type:'offer', data:JSON.stringify(offer), created_at:new Date().toISOString() });
+    // Show VC screen with real video
+    openVC();
+    var lv = document.getElementById('vcLocal');
+    if (lv) { lv.srcObject = localStream; lv.play(); }
+    toast('📹 Llamada iniciada — esperando respuesta...','info');
+  } catch(e) {
+    toast('Error de cámara: '+e.message,'error');
+    openVC(); // show UI anyway
+  }
+}
+
+// Override openVC button to use real call when in a real chat
+var _origOpenVC = typeof openVC === 'function' ? openVC : null;
+function openVC() {
+  if (SB_READY && currentChatUserId && typeof startRealVideoCall === 'function' && !localStream) {
+    startRealVideoCall();
+    return;
+  }
+  // Original VC UI
+  var name = document.getElementById('cd-name');
+  var vcn = document.getElementById('vcn');
+  if(vcn && name) vcn.textContent = name.textContent || 'Llamada';
+  var vco = document.getElementById('vco');
+  if(vco) vco.classList.add('open');
+}
+
+// Override loadChats
+var _origLoadChats2 = typeof loadChats === 'function' ? loadChats : function(){};
+function loadChats() {
+  _origLoadChats2();
+  if (SB_READY && currentUserId) {
+    sbLoadContacts();
+  }
+}
 </script>
 
 <!-- SUPABASE SETUP MODAL -->
