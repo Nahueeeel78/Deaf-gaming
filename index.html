@@ -372,52 +372,39 @@ body.theme-plasma  {--c:#e040fb;--p:#7b1fa2;--g:#ff4081;--r:#ff1744;--bg:#0d000d
   <span class="llogo">🎮</span>
   <div class="lt">Deaf Gaming</div>
   <div class="ls">La comunidad sorda gamer 🤟</div>
-
-  <!-- Step 1: Phone -->
   <div id="ls1" class="lstep active">
-    <div class="fl">Tu número de teléfono</div>
-    <input class="inp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+54 9 11 0000 0000" id="ph">
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button onclick="setC('🇦🇷','+54')" style="flex:1;padding:10px;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.2);border-radius:12px;color:var(--tx);font-size:13px;cursor:pointer;-webkit-appearance:none;">🇦🇷 AR</button>
-      <button onclick="setC('🇺🇸','+1')" style="flex:1;padding:10px;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.2);border-radius:12px;color:var(--tx);font-size:13px;cursor:pointer;-webkit-appearance:none;">🇺🇸 US</button>
-      <button onclick="setC('🌎','+')" style="flex:1;padding:10px;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.2);border-radius:12px;color:var(--tx);font-size:13px;cursor:pointer;-webkit-appearance:none;">🌎 Otro</button>
+    <div class="fl" style="margin-bottom:6px;">Tu email</div>
+    <div style="font-size:12px;color:var(--tm);margin-bottom:14px;">Te mandamos un link para entrar ⚡</div>
+    <input class="inp" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" id="le" oninput="emailCheckFilled()">
+    <button class="btn" id="emailBtn" onclick="sendMagicLink()" style="opacity:.5;pointer-events:none;">Enviar link mágico ✨</button>
+    <div style="margin-top:12px;text-align:center;">
+      <button onclick="enterDemoMode()" style="background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 20px;color:var(--tm);font-size:13px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;">🎮 Probar sin cuenta (modo demo)</button>
     </div>
-    <button class="btn" onclick="goOTP()">Enviar código SMS 📨</button>
   </div>
-
-  <!-- Step 2: OTP -->
   <div id="ls2" class="lstep">
-    <div class="ot">Código enviado a <span id="phd"></span><br><span onclick="goBack()" style="cursor:pointer;">← Cambiar número</span></div>
-    <div class="orow">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o1">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o2">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o3">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o4">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o5">
-      <input class="oi" maxlength="1" type="number" inputmode="numeric" id="o6">
+    <div style="text-align:center;padding:10px 0 20px;">
+      <div style="font-size:60px;margin-bottom:12px;">📧</div>
+      <div style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px;">¡Revisá tu email!</div>
+      <div style="font-size:13px;color:var(--tm);line-height:1.7;">Link enviado a<br><b id="emailDisplay2" style="color:var(--c);"></b><br><br>Tocá el link para entrar.<br><span style="font-size:11px;opacity:.6;">(Revisá spam también)</span></div>
     </div>
-    <div class="ot"><span id="otpt">Reenviar en 45s</span><span id="otpr" onclick="resend()" style="display:none;cursor:pointer;">Reenviar →</span></div>
-    <button class="btn" onclick="verOTP()">Verificar ✅</button>
+    <button class="btn" onclick="sendMagicLink()" style="background:rgba(0,245,255,.08);border:1.5px solid var(--c);color:var(--c);">Reenviar link 🔄</button>
+    <div style="text-align:center;margin-top:10px;"><span onclick="backToEmail()" style="cursor:pointer;color:var(--tm);font-size:13px;">← Cambiar email</span></div>
   </div>
-
-  <!-- Step 3: Profile -->
   <div id="ls3" class="lstep">
-    <div style="text-align:center;margin-bottom:16px;">
-      <div id="lav" onclick="cycleAv()" style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 8px;cursor:pointer;border:3px solid rgba(0,245,255,.3);animation:ap 3s ease-in-out infinite;">🧑</div>
-      <div style="font-size:12px;color:var(--tm);">Toca para cambiar</div>
+    <div style="text-align:center;margin-bottom:14px;">
+      <div id="lav" onclick="cycleAv()" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 6px;cursor:pointer;border:3px solid rgba(0,245,255,.3);">🧑</div>
+      <div style="font-size:11px;color:var(--tm);">Toca para cambiar</div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center;">
-      <button onclick="setAv('🧑')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🧑</button>
-      <button onclick="setAv('👩')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">👩</button>
-      <button onclick="setAv('👨')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">👨</button>
-      <button onclick="setAv('🤟')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🤟</button>
-      <button onclick="setAv('🎮')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🎮</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="setAv('🧑')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🧑</button>
+      <button onclick="setAv('👩')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">👩</button>
+      <button onclick="setAv('👨')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">👨</button>
+      <button onclick="setAv('🤟')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🤟</button>
+      <button onclick="setAv('🎮')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🎮</button>
+      <button onclick="setAv('🦻')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🦻</button>
     </div>
-    <div class="fl">Tu nombre</div>
-    <input class="inp" type="text" inputmode="text" autocomplete="name" placeholder="Sofía Gamer 🎮" id="pname">
-    <div class="fl">Bio (opcional)</div>
-    <input class="inp" type="text" inputmode="text" placeholder="🤟 Gamer y sorda" id="pbio">
-    <button class="btn" onclick="finish()">Entrar a Deaf Gaming 🚀</button>
+    <input class="inp" type="text" placeholder="Tu nombre o apodo" id="ln" style="margin-bottom:14px;">
+    <button class="btn" onclick="finishSetup()">Entrar al app 🎮</button>
   </div>
 </div>
 </div>
@@ -1645,22 +1632,34 @@ function setAv(emoji) {
   selAv=emoji; var el=document.getElementById('lav'); if(el)el.textContent=emoji;
 }
 function finish() {
-  var n=(document.getElementById('pname').value||'').trim()||'Gamer';
-  var b=(document.getElementById('pbio').value||'').trim()||'\ud83e\udd1f Deaf Gamer';
-  var p=(document.getElementById('ph').value||'').trim()||'+1 555';
-  var u={n:n,b:b,p:p,av:selAv,photo:'',banner:'',theme:'cyber',online:true};
-  try{localStorage.setItem('dg_user',JSON.stringify(u));}catch(e){}
-  applyUser(u);
-  var lo=document.getElementById('lo');
-  lo.style.transition='opacity .4s ease,transform .4s ease';
-  lo.style.opacity='0'; lo.style.transform='scale(1.04)';
-  setTimeout(function(){
-    lo.style.display='none';
-    var app=document.getElementById('app');
-    app.style.display='flex'; app.style.opacity='0'; app.style.transform='translateY(16px)';
-    app.style.transition='opacity .45s ease,transform .45s ease';
-    setTimeout(function(){app.style.opacity='1';app.style.transform='none';initScrollHints();},40);
-  },420);
+  // Hide login, show app with animation
+  var lo = document.getElementById('lo');
+  if (lo) {
+    lo.style.transition = 'opacity .4s ease,transform .4s ease';
+    lo.style.opacity = '0';
+    lo.style.transform = 'scale(1.04)';
+  }
+  setTimeout(function() {
+    if (lo) lo.style.display = 'none';
+    // Activate chats screen
+    document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('active'); });
+    document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
+    var sc = document.getElementById('sc-chats'); if (sc) sc.classList.add('active');
+    var nb = document.querySelector('[data-s="chats"]'); if (nb) nb.classList.add('active');
+    var app = document.getElementById('app');
+    if (app) {
+      app.style.display = 'flex';
+      app.style.opacity = '0';
+      app.style.transform = 'translateY(16px)';
+      app.style.transition = 'opacity .45s ease,transform .45s ease';
+      setTimeout(function() {
+        app.style.opacity = '1';
+        app.style.transform = 'none';
+        if (typeof initScrollHints === 'function') initScrollHints();
+        if (typeof loadChats === 'function') loadChats();
+      }, 40);
+    }
+  }, 420);
 }
 
 function applyUser(u) {
@@ -1715,6 +1714,8 @@ function logout() {
 
 // \u2550\u2550 INIT \u2550\u2550
 window.addEventListener('load', function() {
+  setTimeout(async function(){ try{ await checkMagicLinkToken(); }catch(e){} }, 600);
+
   var saved=null;
   try{saved=JSON.parse(localStorage.getItem('dg_user')||'null');}catch(e){}
   if (saved && saved.n) {
@@ -1724,12 +1725,7 @@ window.addEventListener('load', function() {
       var app=document.getElementById('app');
       app.style.display='flex'; app.style.opacity='0';
       app.style.transition='opacity .45s ease';
-      // Activate chats screen
-      document.querySelectorAll('.sc').forEach(function(s){s.classList.remove('active');});
-      document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
-      var sc=document.getElementById('sc-chats'); if(sc) sc.classList.add('active');
-      var nb=document.querySelector('[data-s="chats"]'); if(nb) nb.classList.add('active');
-      setTimeout(function(){app.style.opacity='1';initScrollHints();loadChats();},40);
+      setTimeout(function(){app.style.opacity='1';initScrollHints();},40);
     },800);
   }
   startCanvas();
@@ -2159,295 +2155,113 @@ function applyLang() {
   if (ls) ls.textContent = isEn ? '\uD83C\uDDFA\uD83C\uDDF8 English' : '\uD83C\uDDE6\uD83C\uDDF7 Espa\u00F1ol';
 }
 
-// ══════════════════════════════
-// SUPABASE REALTIME MESSAGING
-// ══════════════════════════════
-var currentChatUserId = null;
-var currentUserId = null;
-var realtimeChannel = null;
 
-async function sbSignUp(email, password, name) {
-  if (!SB_READY) { toast('Sin conexión Supabase', 'error'); return false; }
-  try {
-    var r = await sb.auth.signUp({ email, password });
-    if (r.error) { toast(r.error.message, 'error'); return false; }
-    var uid = r.data.user.id;
-    await sb.from('profiles').upsert({ id: uid, name: name, email: email, avatar: '🧑', bio: 'Deaf Gamer', created_at: new Date().toISOString() });
-    currentUserId = uid;
-    return r.data.user;
-  } catch(e) { toast('Error: '+e.message, 'error'); return false; }
-}
 
-async function sbSignIn(email, password) {
-  if (!SB_READY) { toast('Sin conexión', 'error'); return false; }
-  try {
-    var r = await sb.auth.signInWithPassword({ email, password });
-    if (r.error) { toast(r.error.message, 'error'); return false; }
-    currentUserId = r.data.user.id;
-    // Load profile
-    var pr = await sb.from('profiles').select('*').eq('id', currentUserId).single();
-    if (pr.data) {
-      var u = { n: pr.data.name, b: pr.data.bio||'Deaf Gamer', p: pr.data.phone||'', av: pr.data.avatar||'🧑', photo: pr.data.photo_url||'' };
-      applyUser(u);
-      try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) {}
-    }
-    return r.data.user;
-  } catch(e) { toast('Error: '+e.message, 'error'); return false; }
-}
+// ══ SUPABASE + AUTH ══
+var sb = null, SB_READY = false;
+var currentUserId = null, _emailForOTP = '';
+var SB_URL = 'https://xoqypcntbroqiqybmfhq.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvcXlwY250YnJvcWlxeWJtZmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MjgwNzMsImV4cCI6MjA5ODAwNDA3M30.w5hcSyWItes1o-i0bKs-VTqV2fOvLVqSme-m1dHszNQ';
 
-async function sbLoadContacts() {
-  if (!SB_READY || !currentUserId) return;
-  try {
-    var r = await sb.from('profiles').select('*').neq('id', currentUserId).limit(50);
-    if (r.data && r.data.length > 0) {
-      var cl = document.getElementById('chatList');
-      var empty = document.getElementById('chatListEmpty');
-      if (empty) empty.style.display = 'none';
-      r.data.forEach(function(profile) {
-        if (document.getElementById('chat-'+profile.id)) return;
-        var div = document.createElement('div');
-        div.className = 'cr';
-        div.id = 'chat-'+profile.id;
-        div.style.cursor = 'pointer';
-        div.innerHTML =
-          '<div class="crav" style="font-size:24px;display:flex;align-items:center;justify-content:center;">'+(profile.avatar||'🧑')+'</div>'+
-          '<div class="crb">'+
-            '<div class="crn">'+(profile.name||'Usuario')+'</div>'+
-            '<div class="crs" id="last-'+profile.id+'">Toca para chatear</div>'+
-          '</div>'+
-          '<div style="font-size:10px;color:var(--tm);" id="time-'+profile.id+'"></div>';
-        div.onclick = function() { openRealChat(profile.id, profile.name, profile.avatar||'🧑'); };
-        if (cl) cl.insertBefore(div, cl.firstChild);
-      });
-    }
-  } catch(e) { console.error('Load contacts error:', e); }
-}
-
-async function openRealChat(userId, name, avatar) {
-  currentChatUserId = userId;
-  // Set chat header
-  var cdName = document.getElementById('cd-name');
-  var cdAv = document.getElementById('cd-av');
-  if (cdName) cdName.textContent = name || 'Chat';
-  if (cdAv) cdAv.textContent = avatar || '🧑';
-  // Clear messages
-  var msgArea = document.getElementById('msgArea');
-  if (msgArea) msgArea.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tm);font-size:12px;">🔒 Mensajes cifrados</div>';
-  // Show chat screen
-  document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('active'); });
-  var chatSc = document.getElementById('sc-chat');
-  if (chatSc) chatSc.classList.add('active');
-  // Load messages
-  await sbLoadMessages(userId);
-  // Subscribe to realtime
-  sbSubscribeToChat(userId);
-  setTimeout(function() {
-    var inp = document.getElementById('minp');
-    if (inp) inp.focus();
-  }, 300);
-}
-
-async function sbLoadMessages(otherUserId) {
-  if (!SB_READY || !currentUserId) return;
-  try {
-    var r = await sb.from('messages')
-      .select('*')
-      .or('and(from_id.eq.'+currentUserId+',to_id.eq.'+otherUserId+'),and(from_id.eq.'+otherUserId+',to_id.eq.'+currentUserId+')')
-      .order('created_at', { ascending: true })
-      .limit(50);
-    if (r.data) {
-      var msgArea = document.getElementById('msgArea');
-      if (msgArea) {
-        msgArea.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tm);font-size:12px;">🔒 Mensajes cifrados</div>';
-        r.data.forEach(function(msg) { renderMessage(msg); });
-        msgArea.scrollTop = msgArea.scrollHeight;
+(function(){
+  function tryInit(){
+    try{
+      if(typeof supabase!=='undefined'){
+        sb = supabase.createClient(SB_URL, SB_KEY);
+        SB_READY = true;
+        console.log('Supabase ready');
       }
-    }
-  } catch(e) { console.error('Load messages error:', e); }
-}
-
-function sbSubscribeToChat(otherUserId) {
-  if (realtimeChannel) { sb.removeChannel(realtimeChannel); }
-  realtimeChannel = sb.channel('chat-'+currentUserId+'-'+otherUserId)
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'messages',
-      filter: 'to_id=eq.'+currentUserId
-    }, function(payload) {
-      renderMessage(payload.new);
-      var msgArea = document.getElementById('msgArea');
-      if (msgArea) msgArea.scrollTop = msgArea.scrollHeight;
-      if (typeof vibrate === 'function') vibrate('soft');
-    })
-    .subscribe();
-}
-
-function renderMessage(msg) {
-  var msgArea = document.getElementById('msgArea');
-  if (!msgArea) return;
-  var isMine = msg.from_id === currentUserId;
-  var time = new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  var div = document.createElement('div');
-  div.className = 'mr' + (isMine ? ' mine' : '');
-  div.innerHTML =
-    '<div class="mb" style="'+(isMine?'background:linear-gradient(135deg,var(--c),var(--p));color:#000;':'background:var(--bc);color:var(--tx);')+'max-width:75%;padding:10px 14px;border-radius:'+(isMine?'18px 18px 4px 18px':'18px 18px 18px 4px')+';font-size:14px;line-height:1.4;">'+
-      '<div>'+escHtml(msg.content)+'</div>'+
-      '<div style="font-size:10px;opacity:.6;margin-top:4px;text-align:right;">'+time+(isMine?' ✓✓':'')+'</div>'+
-    '</div>';
-  msgArea.appendChild(div);
-}
-
-function escHtml(t) {
-  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-async function sbSendMessage() {
-  if (!SB_READY || !currentUserId || !currentChatUserId) {
-    toast('Conectate primero', 'error'); return;
+    }catch(e){ console.error('SB init:', e); }
   }
-  var inp = document.getElementById('minp');
-  var text = inp ? inp.value.trim() : '';
-  if (!text) return;
-  inp.value = '';
-  try {
-    var r = await sb.from('messages').insert({
-      from_id: currentUserId,
-      to_id: currentChatUserId,
-      content: text,
-      created_at: new Date().toISOString()
-    });
-    if (r.error) { toast('Error al enviar', 'error'); return; }
-    // Show immediately
-    renderMessage({ from_id: currentUserId, to_id: currentChatUserId, content: text, created_at: new Date().toISOString() });
-    var msgArea = document.getElementById('msgArea');
-    if (msgArea) msgArea.scrollTop = msgArea.scrollHeight;
-  } catch(e) { toast('Error: '+e.message, 'error'); }
+  tryInit();
+  if(!SB_READY){
+    document.addEventListener('DOMContentLoaded', tryInit);
+    window.addEventListener('load', function(){ if(!SB_READY) tryInit(); });
+  }
+})();
+
+function emailCheckFilled(){
+  var v = ((document.getElementById('le')||{}).value||'');
+  var b = document.getElementById('emailBtn');
+  var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  if(b){ b.style.opacity = ok?'1':'.5'; b.style.pointerEvents = ok?'auto':'none'; }
 }
 
-// ══ VIDEOLLAMADAS WebRTC ══
-var peerConn = null;
-var localStream = null;
+async function sendMagicLink(){
+  var email = ((document.getElementById('le')||{}).value||'').trim().toLowerCase();
+  if(!email){ toast('Ingresá tu email','error'); return; }
+  _emailForOTP = email;
+  var btn = document.getElementById('emailBtn');
+  if(btn){ btn.textContent='Enviando...'; btn.style.opacity='.7'; btn.style.pointerEvents='none'; }
+  try{
+    var red = window.location.href.split('?')[0].split('#')[0];
+    var r = await sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, emailRedirectTo: red } });
+    if(r.error) throw new Error(r.error.message);
+    document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('ls2').classList.add('active');
+    var d = document.getElementById('emailDisplay2'); if(d) d.textContent = email;
+    toast('Link enviado! Revisá tu email','success');
+  }catch(e){
+    toast('Error de conexión. Probá modo demo.','error');
+    console.error('Magic link error:', e);
+  }
+  if(btn){ btn.textContent='Enviar link mágico'; btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+}
 
-async function startVideoCall(toUserId) {
-  if (!SB_READY) { toast('Sin conexión', 'error'); return; }
-  try {
-    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    var localVid = document.getElementById('localVideo');
-    if (localVid) { localVid.srcObject = localStream; localVid.play(); }
-    peerConn = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-    localStream.getTracks().forEach(function(t) { peerConn.addTrack(t, localStream); });
-    peerConn.ontrack = function(e) {
-      var remoteVid = document.getElementById('remoteVideo');
-      if (remoteVid) { remoteVid.srcObject = e.streams[0]; remoteVid.play(); }
-    };
-    peerConn.onicecandidate = async function(e) {
-      if (e.candidate) {
-        await sb.from('calls').insert({ from_id: currentUserId, to_id: toUserId, type: 'ice', data: JSON.stringify(e.candidate), created_at: new Date().toISOString() });
+function backToEmail(){
+  document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('ls1').classList.add('active');
+}
+
+function enterDemoMode(){
+  var u = { n:'Gamer Demo', b:'Deaf Gamer', p:'+54 9 11 0000', av:'🎮', photo:'', email:'demo@deafgaming.app' };
+  applyUser(u);
+  try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
+  toast('Modo demo activado!','success');
+  setTimeout(function(){ finish(); }, 400);
+}
+
+async function finishSetup(){
+  var name = ((document.getElementById('ln')||{}).value||'').trim() || 'Gamer';
+  var btn = document.querySelector('#ls3 .btn');
+  if(btn){ btn.textContent='Guardando...'; btn.disabled=true; }
+  try{
+    if(SB_READY && currentUserId){
+      await sb.from('profiles').upsert({ id: currentUserId, name: name, email: _emailForOTP, avatar: selAv||'🧑', bio: 'Deaf Gamer', created_at: new Date().toISOString() });
+    }
+    var u = { n:name, b:'Deaf Gamer', p:'', av:selAv||'🧑', photo:'', email:_emailForOTP };
+    applyUser(u);
+    try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
+    toast('Bienvenido '+name+'!','success');
+    setTimeout(function(){ finish(); }, 400);
+  }catch(e){ toast('Error: '+e.message,'error'); }
+  if(btn){ btn.textContent='Entrar al app'; btn.disabled=false; }
+}
+
+async function checkMagicLinkToken(){
+  if(!SB_READY) return false;
+  try{
+    var r = await sb.auth.getSession();
+    if(r.data && r.data.session && r.data.session.user){
+      var user = r.data.session.user;
+      currentUserId = user.id; _emailForOTP = user.email;
+      var pr = await sb.from('profiles').select('*').eq('id', user.id).single();
+      if(pr.data && pr.data.name){
+        var u = { n:pr.data.name, b:pr.data.bio||'Deaf Gamer', p:pr.data.phone||'', av:pr.data.avatar||'🧑', photo:pr.data.photo_url||'', email:user.email };
+        applyUser(u);
+        try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
+        toast('Bienvenido de vuelta '+pr.data.name+'!','success');
+        setTimeout(function(){ finish(); }, 400);
+      } else {
+        document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
+        var ls3 = document.getElementById('ls3'); if(ls3) ls3.classList.add('active');
       }
-    };
-    var offer = await peerConn.createOffer();
-    await peerConn.setLocalDescription(offer);
-    await sb.from('calls').insert({ from_id: currentUserId, to_id: toUserId, type: 'offer', data: JSON.stringify(offer), created_at: new Date().toISOString() });
-    toast('📹 Llamada iniciada...', 'info');
-    openVideoCallScreen();
-  } catch(e) { toast('Error cámara: '+e.message, 'error'); }
-}
-
-function openVideoCallScreen() {
-  var modal = document.createElement('div');
-  modal.id = 'videoCallModal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#000;display:flex;flex-direction:column;';
-  modal.innerHTML =
-    '<video id="remoteVideo" autoplay playsinline style="flex:1;width:100%;object-fit:cover;background:#111;"></video>'+
-    '<video id="localVideo" autoplay playsinline muted style="position:absolute;top:20px;right:16px;width:100px;height:140px;border-radius:14px;object-fit:cover;border:2px solid var(--c);"></video>'+
-    '<div style="position:absolute;bottom:0;left:0;right:0;padding:24px;display:flex;justify-content:center;gap:24px;background:linear-gradient(transparent,rgba(0,0,0,.8));">'+
-      '<button onclick="endVideoCall()" style="width:64px;height:64px;border-radius:50%;background:#ff3b30;border:none;font-size:28px;cursor:pointer;">📵</button>'+
-      '<button onclick="toggleMute()" style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:none;font-size:28px;cursor:pointer;" id="muteBtn">🎤</button>'+
-      '<button onclick="toggleCamera()" style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:none;font-size:28px;cursor:pointer;">📷</button>'+
-    '</div>';
-  document.body.appendChild(modal);
-}
-
-function endVideoCall() {
-  if (peerConn) { peerConn.close(); peerConn = null; }
-  if (localStream) { localStream.getTracks().forEach(function(t){t.stop();}); localStream = null; }
-  var modal = document.getElementById('videoCallModal');
-  if (modal) modal.remove();
-}
-
-function toggleMute() {
-  if (!localStream) return;
-  var audio = localStream.getAudioTracks()[0];
-  if (audio) { audio.enabled = !audio.enabled; document.getElementById('muteBtn').textContent = audio.enabled ? '🎤' : '🔇'; }
-}
-
-function toggleCamera() {
-  if (!localStream) return;
-  var video = localStream.getVideoTracks()[0];
-  if (video) video.enabled = !video.enabled;
-}
-
-// Override sendMsg to use Supabase
-function sendMsg() {
-  if (SB_READY && currentChatUserId) {
-    sbSendMessage();
-  } else {
-    // Demo mode
-    var inp = document.getElementById('minp');
-    var text = inp ? inp.value.trim() : '';
-    if (!text) return;
-    inp.value = '';
-    renderMessage({ from_id: 'me', to_id: 'other', content: text, created_at: new Date().toISOString() });
-    var msgArea = document.getElementById('msgArea');
-    if (msgArea) msgArea.scrollTop = msgArea.scrollHeight;
-  }
-}
-
-// Override doLogin to use Supabase auth
-var _origDoLogin = typeof doLogin === 'function' ? doLogin : null;
-async function doLogin() {
-  var email = (document.getElementById('loginEmail') || document.getElementById('le') || {}).value || '';
-  var pass  = (document.getElementById('loginPass')  || document.getElementById('lp') || {}).value || '';
-  var isNew = document.querySelector('.ltab.active') && document.querySelector('.ltab.active').dataset && document.querySelector('.ltab.active').textContent === 'Crear cuenta';
-  
-  if (!email || !pass) { toast('Ingresá email y contraseña', 'error'); return; }
-  
-  var btn = document.getElementById('loginBtn') || document.querySelector('[onclick*=doLogin]');
-  if (btn) { btn.textContent = '⏳ Conectando...'; btn.disabled = true; }
-  
-  var user;
-  if (SB_READY) {
-    if (isNew) {
-      var name = (document.getElementById('loginName') || document.getElementById('ln') || {}).value || 'Gamer';
-      user = await sbSignUp(email, pass, name);
-    } else {
-      user = await sbSignIn(email, pass);
+      return true;
     }
-    if (user) {
-      currentUserId = user.id;
-      setTimeout(function() {
-        finish();
-        sbLoadContacts();
-      }, 200);
-    }
-  } else {
-    // Demo fallback
-    if (_origDoLogin) _origDoLogin();
-    else finish();
-  }
-  
-  if (btn) { btn.textContent = 'Ingresar'; btn.disabled = false; }
+  }catch(e){ console.log('No session:', e.message); }
+  return false;
 }
 
-// Load contacts when app launches
-var _origLoadChats = typeof loadChats === 'function' ? loadChats : function(){};
-function loadChats() {
-  _origLoadChats();
-  if (SB_READY && currentUserId) {
-    sbLoadContacts();
-  }
-}
 </script>
 
 <!-- SUPABASE SETUP MODAL -->
