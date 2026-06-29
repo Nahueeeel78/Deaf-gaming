@@ -372,41 +372,40 @@ body.theme-plasma  {--c:#e040fb;--p:#7b1fa2;--g:#ff4081;--r:#ff1744;--bg:#0d000d
   <span class="llogo">🎮</span>
   <div class="lt">Deaf Gaming</div>
   <div class="ls">La comunidad sorda gamer 🤟</div>
+
+  <!-- PASO 1: Usuario + Apodo -->
   <div id="ls1" class="lstep active">
-    <div class="fl" style="margin-bottom:6px;">Tu email</div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:14px;">Te mandamos un link para entrar ⚡</div>
-    <input class="inp" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" id="le" oninput="emailCheckFilled()">
-    <button class="btn" id="emailBtn" onclick="sendMagicLink()" style="opacity:.5;pointer-events:none;">Enviar link mágico ✨</button>
-    <div style="margin-top:12px;text-align:center;">
-      <button onclick="enterDemoMode()" style="background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 20px;color:var(--tm);font-size:13px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;">🎮 Probar sin cuenta (modo demo)</button>
+    <div class="fl" style="margin-bottom:6px;">Elegí tu usuario</div>
+    <div style="font-size:12px;color:var(--tm);margin-bottom:14px;">Solo letras y números, sin espacios (ej: nahuegamer)</div>
+    <input class="inp" type="text" autocomplete="off" autocapitalize="off"
+      placeholder="usuario_unico" id="lu" oninput="usernameCheckFilled()" maxlength="20">
+    <div class="fl" style="margin-bottom:6px;margin-top:14px;">Tu apodo</div>
+    <input class="inp" type="text" autocomplete="off"
+      placeholder="Cómo te van a ver los demás" id="ln" oninput="usernameCheckFilled()" maxlength="30">
+    <button class="btn" id="userBtn" onclick="loginWithUsername()" style="opacity:.5;pointer-events:none;margin-top:14px;">Entrar al app 🎮</button>
+    <div style="font-size:12px;color:var(--tm);text-align:center;margin-top:12px;">
+      Si tu usuario ya existe, vas a entrar con tu cuenta guardada
     </div>
   </div>
-  <div id="ls2" class="lstep">
-    <div style="text-align:center;padding:10px 0 20px;">
-      <div style="font-size:60px;margin-bottom:12px;">📧</div>
-      <div style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px;">¡Revisá tu email!</div>
-      <div style="font-size:13px;color:var(--tm);line-height:1.7;">Link enviado a<br><b id="emailDisplay2" style="color:var(--c);"></b><br><br>Tocá el link para entrar.<br><span style="font-size:11px;opacity:.6;">(Revisá spam también)</span></div>
-    </div>
-    <button class="btn" onclick="sendMagicLink()" style="background:rgba(0,245,255,.08);border:1.5px solid var(--c);color:var(--c);">Reenviar link 🔄</button>
-    <div style="text-align:center;margin-top:10px;"><span onclick="backToEmail()" style="cursor:pointer;color:var(--tm);font-size:13px;">← Cambiar email</span></div>
-  </div>
+
+  <!-- PASO 2: Elegir avatar (primera vez) -->
   <div id="ls3" class="lstep">
+    <div style="font-size:15px;font-weight:700;color:var(--tx);text-align:center;margin-bottom:4px;">¡Bienvenido! 🎮</div>
+    <div style="font-size:12px;color:var(--tm);text-align:center;margin-bottom:16px;">Elegí tu avatar</div>
     <div style="text-align:center;margin-bottom:14px;">
       <div id="lav" onclick="cycleAv()" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 6px;cursor:pointer;border:3px solid rgba(0,245,255,.3);">🧑</div>
       <div style="font-size:11px;color:var(--tm);">Toca para cambiar</div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;justify-content:center;">
-      <button onclick="setAv('🧑')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🧑</button>
-      <button onclick="setAv('👩')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">👩</button>
-      <button onclick="setAv('👨')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">👨</button>
-      <button onclick="setAv('🤟')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🤟</button>
-      <button onclick="setAv('🎮')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🎮</button>
-      <button onclick="setAv('🦻')" style="font-size:20px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px;cursor:pointer;-webkit-appearance:none;">🦻</button>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="setAv('🧑')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🧑</button>
+      <button onclick="setAv('👩')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">👩</button>
+      <button onclick="setAv('👨')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">👨</button>
+      <button onclick="setAv('🤟')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🤟</button>
+      <button onclick="setAv('🎮')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🎮</button>
+      <button onclick="setAv('🦻')" style="font-size:22px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);border-radius:12px;padding:8px 12px;cursor:pointer;-webkit-appearance:none;">🦻</button>
     </div>
-    <input class="inp" type="text" placeholder="Tu nombre o apodo" id="ln" style="margin-bottom:14px;">
-    <button class="btn" onclick="finishSetup()">Entrar al app 🎮</button>
+    <button class="btn" onclick="finishSetup()">Confirmar y entrar 🎮</button>
   </div>
-</div>
 </div>
 
 <!-- APP -->
@@ -2159,7 +2158,7 @@ function applyLang() {
 
 // ══ SUPABASE + AUTH ══
 var sb = null, SB_READY = false;
-var currentUserId = null, _emailForOTP = '';
+var currentUserId = null, _emailForOTP = '', _currentUsername = '', _currentNickname = '';
 var SB_URL = 'https://xoqypcntbroqiqybmfhq.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvcXlwY250YnJvcWlxeWJtZmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MjgwNzMsImV4cCI6MjA5ODAwNDA3M30.w5hcSyWItes1o-i0bKs-VTqV2fOvLVqSme-m1dHszNQ';
 
@@ -2180,87 +2179,70 @@ var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
   }
 })();
 
-function emailCheckFilled(){
-  var v = ((document.getElementById('le')||{}).value||'');
-  var b = document.getElementById('emailBtn');
-  var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-  if(b){ b.style.opacity = ok?'1':'.5'; b.style.pointerEvents = ok?'auto':'none'; }
+function usernameCheckFilled() {
+  var u = ((document.getElementById('lu')||{}).value||'').trim();
+  var n = ((document.getElementById('ln')||{}).value||'').trim();
+  var btn = document.getElementById('userBtn');
+  var validUser = /^[a-zA-Z0-9_]{3,20}$/.test(u);
+  var ok = validUser && n.length >= 2;
+  if (btn) { btn.style.opacity = ok ? '1' : '.5'; btn.style.pointerEvents = ok ? 'auto' : 'none'; }
 }
 
-async function sendMagicLink(){
-  var email = ((document.getElementById('le')||{}).value||'').trim().toLowerCase();
-  if(!email){ toast('Ingresá tu email','error'); return; }
-  _emailForOTP = email;
-  var btn = document.getElementById('emailBtn');
-  if(btn){ btn.textContent='Enviando...'; btn.style.opacity='.7'; btn.style.pointerEvents='none'; }
-  try{
-    var red = window.location.href.split('?')[0].split('#')[0];
-    var r = await sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, emailRedirectTo: red } });
-    if(r.error) throw new Error(r.error.message);
-    document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
-    document.getElementById('ls2').classList.add('active');
-    var d = document.getElementById('emailDisplay2'); if(d) d.textContent = email;
-    toast('Link enviado! Revisá tu email','success');
-  }catch(e){
-    toast('Error de conexión. Probá modo demo.','error');
-    console.error('Magic link error:', e);
+async function loginWithUsername() {
+  var username = ((document.getElementById('lu')||{}).value||'').trim().toLowerCase();
+  var nickname = ((document.getElementById('ln')||{}).value||'').trim();
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { toast('Usuario inválido. Solo letras, números y _','error'); return; }
+  if (nickname.length < 2) { toast('Ingresá un apodo','error'); return; }
+
+  var btn = document.getElementById('userBtn');
+  if (btn) { btn.textContent = '⏳ Conectando...'; btn.disabled = true; }
+
+  _currentUsername = username;
+  _currentNickname = nickname;
+
+  if (SB_READY) {
+    try {
+      // Check if username exists
+      var existing = await sb.from('profiles').select('*').eq('username', username).maybeSingle();
+      if (existing.data) {
+        // User exists — log them in
+        currentUserId = existing.data.id;
+        var u = { n: existing.data.name, b: existing.data.bio||'Deaf Gamer', p:'', av: existing.data.avatar||'🧑', photo:'', username: username };
+        applyUser(u);
+        try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) {}
+        toast('¡Bienvenido de vuelta '+existing.data.name+'! 🎮','success');
+        setTimeout(function(){ finish(); }, 400);
+      } else {
+        // New user — go to avatar selection
+        currentUserId = 'local-' + username + '-' + Date.now();
+        document.querySelectorAll('.lstep').forEach(function(s){s.classList.remove('active');});
+        document.getElementById('ls3').classList.add('active');
+      }
+    } catch(e) {
+      console.error('Username login error:', e);
+      // Fallback: create locally anyway
+      currentUserId = 'local-' + username + '-' + Date.now();
+      document.querySelectorAll('.lstep').forEach(function(s){s.classList.remove('active');});
+      document.getElementById('ls3').classList.add('active');
+    }
+  } else {
+    // No Supabase — local only
+    currentUserId = 'local-' + username + '-' + Date.now();
+    document.querySelectorAll('.lstep').forEach(function(s){s.classList.remove('active');});
+    document.getElementById('ls3').classList.add('active');
   }
-  if(btn){ btn.textContent='Enviar link mágico'; btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+
+  if (btn) { btn.textContent = 'Entrar al app 🎮'; btn.disabled = false; }
 }
 
-function backToEmail(){
-  document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById('ls1').classList.add('active');
-}
-
-function enterDemoMode(){
-  var u = { n:'Gamer Demo', b:'Deaf Gamer', p:'+54 9 11 0000', av:'🎮', photo:'', email:'demo@deafgaming.app' };
+function enterDemoMode() {
+  var u = { n:'Gamer Demo', b:'Deaf Gamer 🎮', p:'', av:'🎮', photo:'', username:'demo' };
   applyUser(u);
-  try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
-  toast('Modo demo activado!','success');
+  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) {}
+  toast('🎮 Modo demo activado!','success');
   setTimeout(function(){ finish(); }, 400);
 }
 
-async function finishSetup(){
-  var name = ((document.getElementById('ln')||{}).value||'').trim() || 'Gamer';
-  var btn = document.querySelector('#ls3 .btn');
-  if(btn){ btn.textContent='Guardando...'; btn.disabled=true; }
-  try{
-    if(SB_READY && currentUserId){
-      await sb.from('profiles').upsert({ id: currentUserId, name: name, email: _emailForOTP, avatar: selAv||'🧑', bio: 'Deaf Gamer', created_at: new Date().toISOString() });
-    }
-    var u = { n:name, b:'Deaf Gamer', p:'', av:selAv||'🧑', photo:'', email:_emailForOTP };
-    applyUser(u);
-    try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
-    toast('Bienvenido '+name+'!','success');
-    setTimeout(function(){ finish(); }, 400);
-  }catch(e){ toast('Error: '+e.message,'error'); }
-  if(btn){ btn.textContent='Entrar al app'; btn.disabled=false; }
-}
-
-async function checkMagicLinkToken(){
-  if(!SB_READY) return false;
-  try{
-    var r = await sb.auth.getSession();
-    if(r.data && r.data.session && r.data.session.user){
-      var user = r.data.session.user;
-      currentUserId = user.id; _emailForOTP = user.email;
-      var pr = await sb.from('profiles').select('*').eq('id', user.id).single();
-      if(pr.data && pr.data.name){
-        var u = { n:pr.data.name, b:pr.data.bio||'Deaf Gamer', p:pr.data.phone||'', av:pr.data.avatar||'🧑', photo:pr.data.photo_url||'', email:user.email };
-        applyUser(u);
-        try{ localStorage.setItem('dg_user', JSON.stringify(u)); }catch(e){}
-        toast('Bienvenido de vuelta '+pr.data.name+'!','success');
-        setTimeout(function(){ finish(); }, 400);
-      } else {
-        document.querySelectorAll('.lstep').forEach(function(s){ s.classList.remove('active'); });
-        var ls3 = document.getElementById('ls3'); if(ls3) ls3.classList.add('active');
-      }
-      return true;
-    }
-  }catch(e){ console.log('No session:', e.message); }
-  return false;
-}
 
 // ══════════════════════════════════════
 // CONTACTOS REALES + CHAT + VIDEOLLAMADA
