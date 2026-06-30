@@ -397,6 +397,16 @@ body.font-serif *{font-family:Georgia,serif!important;}
 .pfbtn,.rkbtn{padding:9px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--tx);font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;}
 .pfbtn.active,.rkbtn.active{border-color:var(--c);background:rgba(0,245,255,.12);color:var(--c);}
 
+
+.social-neon{ transition: transform .2s; }
+.social-neon:active{ transform: scale(.9); }
+.wa-neon{ animation: waGlow 2s ease-in-out infinite; }
+.ig-neon{ animation: igGlow 2s ease-in-out infinite; }
+.fb-neon{ animation: fbGlow 2s ease-in-out infinite; }
+@keyframes waGlow{ 0%,100%{ box-shadow:0 0 8px rgba(37,211,102,.5); } 50%{ box-shadow:0 0 20px rgba(37,211,102,.9),0 0 32px rgba(37,211,102,.5); } }
+@keyframes igGlow{ 0%,100%{ box-shadow:0 0 10px rgba(255,0,110,.6); } 50%{ box-shadow:0 0 24px rgba(255,0,110,1),0 0 40px rgba(255,45,120,.7); } }
+@keyframes fbGlow{ 0%,100%{ box-shadow:0 0 8px rgba(24,119,242,.5); } 50%{ box-shadow:0 0 20px rgba(24,119,242,.9),0 0 32px rgba(24,119,242,.5); } }
+
 </style>
 
 <!-- Supabase SDK -->
@@ -651,6 +661,86 @@ body.font-serif *{font-family:Georgia,serif!important;}
           <div style="font-size:11px;color:var(--tm);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Mis plataformas</div>
           <div id="profPlatforms" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"></div>
         </div>
+
+        <!-- CUENTAS GAMING (Steam / Epic) -->
+        <div style="margin-top:18px;">
+          <div style="font-size:11px;color:var(--tm);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Cuentas Gaming</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <!-- STEAM -->
+            <div onclick="linkSteam()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 20px;min-width:90px;position:relative;">
+              <svg width="32" height="32" viewBox="0 0 256 259" fill="none"><path d="M127.8 0C60.8 0 5.9 51.8.2 117.5l68.7 28.4a36 36 0 0 1 20.3-6.3l30.6-44.3v-.6c0-26.7 21.7-48.4 48.4-48.4s48.4 21.7 48.4 48.4-21.7 48.5-48.4 48.5h-1.1l-43.6 31.1c0 .3.1.6.1.9 0 20-16.3 36.3-36.3 36.3-17.6 0-32.3-12.5-35.6-29.2L2.6 156.3C18.2 211.2 68.3 258.7 127.8 258.7c71.4 0 129.3-57.9 129.3-129.3S199.2 0 127.8 0z" fill="#fff"/><path d="M80.3 196.4l-15.7-6.5c2.8 5.8 7.6 10.7 14 13.4 13.8 5.8 29.8-.8 35.6-14.7a27.2 27.2 0 0 0 0-20.8c-2.8-6.7-8-11.9-14.8-14.7-6.7-2.8-13.9-2.7-20.2-.4l16.2 6.7c10.2 4.3 15 16 10.8 26.2-4.3 10.2-16 15-26.1 10.8z" fill="#fff"/><path d="M192.6 94.5c0-17.8-14.5-32.3-32.3-32.3s-32.3 14.5-32.3 32.3 14.5 32.3 32.3 32.3 32.3-14.5 32.3-32.3zm-56.5-.1c0-13.4 10.9-24.2 24.2-24.2s24.2 10.9 24.2 24.2-10.8 24.3-24.2 24.3-24.2-10.9-24.2-24.3z" fill="#fff"/></svg>
+              <span style="font-size:12px;font-weight:700;color:var(--tx);">Steam</span>
+              <div id="steamStatus" style="display:flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#777;" id="steamDot"></span>
+                <span style="font-size:10px;color:var(--tm);" id="steamLabel">Desconectado</span>
+              </div>
+            </div>
+            <!-- EPIC -->
+            <div onclick="linkEpic()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 20px;min-width:90px;position:relative;">
+              <svg width="32" height="32" viewBox="0 0 256 296" fill="none"><path d="M30.4 0C13.6 0 0 13.6 0 30.4v200.7c0 4.8 1 8 3.4 11.4 2.3 3.2 4.6 4.8 9.7 7l103.7 43.3c4.8 2 7 2.7 11.2 2.7s6.4-.7 11.2-2.7l103.7-43.3c5-2.2 7.4-3.8 9.7-7 2.3-3.4 3.4-6.6 3.4-11.4V30.4C256 13.6 242.4 0 225.6 0H30.4z" fill="#fff"/><path d="M180.5 60.7v15.4h-39.2v25.3h35.6v15.4h-35.6v27.7h39.7v15.4h-57.3V60.7h56.8zM91.8 60.7c18.6 0 30.1 11.4 30.1 29.5s-11.7 29.6-30.4 29.6H75.2v40.2H57.6V60.7h34.2zm-1.2 43.8c9 0 14.2-5.2 14.2-14.3s-5.2-14.2-14.2-14.2H75.2v28.5h15.4z" fill="#121212"/></svg>
+              <span style="font-size:12px;font-weight:700;color:var(--tx);">Epic Games</span>
+              <div id="epicStatus" style="display:flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#777;" id="epicDot"></span>
+                <span style="font-size:10px;color:var(--tm);" id="epicLabel">Desconectado</span>
+              </div>
+            </div>
+            <!-- EA -->
+            <div onclick="linkEA()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 18px;min-width:88px;">
+              <svg width="34" height="34" viewBox="0 0 512 512" fill="#ff4747"><path d="M285 130L210 250h-93l28-45h60l15-30H92l-28 45h47l-75 120h168l75-120 30 60h-30l-28 45h86l28 45h75L285 130zm-90 90h-90l-15 30h90l15-30z"/></svg>
+              <span style="font-size:12px;font-weight:700;color:var(--tx);">EA</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#777;" id="eaDot"></span>
+                <span style="font-size:10px;color:var(--tm);" id="eaLabel">Desconectado</span>
+              </div>
+            </div>
+            <!-- BATTLE.NET -->
+            <div onclick="linkBnet()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 18px;min-width:88px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="#148eff"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.5 0 2.7 3 3 7.2-.9-.6-1.9-.9-3-.9s-2.1.3-3 .9C9.3 7 10.5 4 12 4zM5.5 7.8c1-.2 2.7 1.7 4 4.6-1.1.7-2 1.7-2.5 2.9C4.2 12.4 2.8 9.3 3.7 8.4c.4-.4 1-.6 1.8-.6zm13 0c.8 0 1.4.2 1.8.6.9.9-.5 4-3.3 6.9-.5-1.2-1.4-2.2-2.5-2.9 1.3-2.9 3-4.8 4-4.6zM12 13c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1zm-5.5 4.7c.5 1.2 1.4 2.2 2.5 2.9-1.3 2.9-3 4.8-4 4.6-.8 0-1.4-.2-1.8-.6-.9-.9.5-4 3.3-6.9zm11 0c2.8 2.9 4.2 6 3.3 6.9-.4.4-1 .6-1.8.6-1 .2-2.7-1.7-4-4.6 1.1-.7 2-1.7 2.5-2.9zM9 16.8c.9.6 1.9.9 3 .9s2.1-.3 3-.9C14.7 21 13.5 24 12 24s-2.7-3-3-7.2z"/></svg>
+              <span style="font-size:12px;font-weight:700;color:var(--tx);">Battle.net</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#777;" id="bnetDot"></span>
+                <span style="font-size:10px;color:var(--tm);" id="bnetLabel">Desconectado</span>
+              </div>
+            </div>
+            <!-- UBISOFT -->
+            <div onclick="linkUbi()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 18px;min-width:88px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8 0-1.4.4-2.8 1-4 .2 1.4 1.2 2.6 2.5 3.1-.4.9-.6 1.9-.6 2.9 0 2.8 2.2 5 5 5 .5 0 1-.1 1.5-.2-.4.1-.9.2-1.4.2-2.5 0-4.5-2-4.5-4.5S9.5 8 12 8c.8 0 1.5.2 2.2.6-.5-.2-1.1-.3-1.7-.3-2.2 0-4 1.8-4 4 0 .9.3 1.7.8 2.4-.5-.3-.8-.9-.8-1.6 0-1.1.9-2 2-2s2 .9 2 2c0 .6-.3 1.1-.7 1.5C13.6 16 15 14.7 15 13c0-2.2-1.8-4-4-4-.3 0-.7 0-1 .1C11.4 8.4 12.7 8 14 8c3 0 5.5 2.5 5.5 5.5 0 .3 0 .6-.1.9.4-1.1.6-2.2.6-3.4 0-4.4-3.6-8-8-8z"/></svg>
+              <span style="font-size:12px;font-weight:700;color:var(--tx);">Ubisoft</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#777;" id="ubiDot"></span>
+                <span style="font-size:10px;color:var(--tm);" id="ubiLabel">Desconectado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REDES SOCIALES NEÓN -->
+        <div style="margin-top:22px;">
+          <div style="font-size:11px;color:var(--tm);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Seguime en mis redes</div>
+          <div style="display:flex;gap:18px;justify-content:center;">
+            <!-- WHATSAPP -->
+            <div onclick="openSocial('whatsapp')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div class="social-neon wa-neon" style="width:58px;height:58px;border-radius:18px;background:#0a0e1a;display:flex;align-items:center;justify-content:center;border:2px solid #25D366;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="#25D366"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-1.7-.9-2.8-1.5-4-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.3 0-.5s-.6-1.6-.9-2.1c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.1 2.9c.1.2 2 3.1 4.9 4.3 1.8.8 2.5.8 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.3A10 10 0 1012 2zm0 18a8 8 0 01-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1112 20z"/></svg>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#25D366;">WhatsApp</span>
+            </div>
+            <!-- INSTAGRAM -->
+            <div onclick="openSocial('instagram')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div class="social-neon ig-neon" style="width:58px;height:58px;border-radius:18px;background:#0a0e1a;display:flex;align-items:center;justify-content:center;border:2px solid #ff006e;">
+                <svg width="32" height="32" viewBox="0 0 512 512" fill="none"><rect x="60" y="60" width="392" height="392" rx="110" stroke="#ff2d78" stroke-width="42"/><circle cx="256" cy="256" r="100" stroke="#ff2d78" stroke-width="42"/><circle cx="382" cy="138" r="26" fill="#ff2d78"/></svg>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#e1306c;">Instagram</span>
+            </div>
+            <!-- FACEBOOK -->
+            <div onclick="openSocial('facebook')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div class="social-neon fb-neon" style="width:58px;height:58px;border-radius:18px;background:#0a0e1a;display:flex;align-items:center;justify-content:center;border:2px solid #1877F2;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12a12 12 0 10-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.6 4.5-4.6 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0024 12z"/></svg>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#1877F2;">Facebook</span>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- INSTAGRAM STATS -->
       <div style="display:flex;justify-content:space-around;padding:14px 18px;margin:0 16px 16px;background:var(--bc);border-radius:18px;border:1px solid rgba(0,245,255,.12);">
@@ -669,35 +759,14 @@ body.font-serif *{font-family:Georgia,serif!important;}
           <div style="font-size:12px;color:var(--tm);margin-top:2px;">Contactos</div>
         </div>
       </div>
-      <!-- INFO CARD -->
-      <div class="card">
-        <div class="row" onclick="editField('name')">
-          <div class="row-ic">📝</div>
-          <div class="row-t">
-            <div class="row-t1">Nombre</div>
-            <div class="row-t2" id="e-name" style="color:var(--tx);font-weight:500;">Tu nombre</div>
-          </div>
-          <div class="row-arr" style="color:var(--c);">›</div>
-        </div>
-        <div class="row" onclick="editField('bio')">
-          <div class="row-ic">💬</div>
-          <div class="row-t">
-            <div class="row-t1">Biografía</div>
-            <div class="row-t2" id="e-bio" style="color:var(--tx);font-weight:500;white-space:normal;line-height:1.4;">🤟 Deaf Gamer</div>
-          </div>
-          <div class="row-arr" style="color:var(--c);">›</div>
-        </div>
-        <div class="row" onclick="togShowPhone()">
-          <div class="row-ic">📱</div>
-          <div class="row-t">
-            <div class="row-t1" id="t-number">Número</div>
-            <div class="row-t2" id="e-phone">+1 555</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-            <span id="phoneVisIcon" style="font-size:14px;color:var(--tm);">👁</span>
-            <span id="phoneVisLabel" style="font-size:11px;color:var(--tm);font-weight:600;">Visible</span>
-          </div>
-        </div>
+      <!-- INFO CARD removed — editing now via ✏️ button. Hidden spans kept for compatibility -->
+      <div style="display:none;">
+        <span id="e-name">Tu nombre</span>
+        <span id="e-bio">🤟 Deaf Gamer</span>
+        <span id="e-phone">+1 555</span>
+        <span id="t-number">Número</span>
+        <span id="phoneVisIcon">👁</span>
+        <span id="phoneVisLabel">Visible</span>
       </div>
       <!-- connection status moved to topbar pill -->
       <!-- HIDDEN INPUTS -->
@@ -3205,6 +3274,180 @@ function handleEditBanner(e) {
   };
   reader.readAsDataURL(file);
 }
+// ══════════════════════════════
+// CUENTAS GAMING + REDES
+// ══════════════════════════════
+
+// TUS LINKS DE REDES — reemplazá con los reales
+var SOCIAL_LINKS = {
+  instagram: 'https://instagram.com/el_lindonahu92',
+  whatsapp: 'https://wa.me/5491125628797',
+  facebook: 'https://www.facebook.com/share/18u7Hmz25q/?mibextid=wwXIfr'
+};
+
+function openSocial(red) {
+  var url = SOCIAL_LINKS[red];
+  if (!url || url.indexOf('TU_') >= 0) {
+    toast('⚠️ Configurá tu link de ' + red, 'error');
+    return;
+  }
+  window.open(url, '_blank');
+}
+
+// ══ STEAM ══
+function linkSteam() {
+  var saved = '';
+  try { var u = JSON.parse(localStorage.getItem('dg_user')||'{}'); saved = u.steam || ''; } catch(e){}
+  if (saved) {
+    // Ya vinculado — abrir perfil o desvincular
+    if (confirm('¿Abrir tu perfil de Steam? (Cancelar para desvincular)')) {
+      window.open('https://steamcommunity.com/id/' + saved, '_blank');
+    } else {
+      setSteamLink('');
+      toast('Steam desvinculado','info');
+    }
+    return;
+  }
+  var user = prompt('Ingresá tu usuario de Steam (steamcommunity.com/id/TU_USUARIO):');
+  if (user && user.trim()) {
+    setSteamLink(user.trim());
+    toast('✅ Steam vinculado!','success');
+  }
+}
+
+function setSteamLink(user) {
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('dg_user')||'{}'); } catch(e){}
+  u.steam = user;
+  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e){}
+  updateSteamStatus(user);
+  if (SB_READY && currentUserId) {
+    try { sb.from('profiles').update({ steam: user }).eq('id', currentUserId).then(function(){}); } catch(e){}
+  }
+}
+
+function updateSteamStatus(user) {
+  var dot = document.getElementById('steamDot');
+  var label = document.getElementById('steamLabel');
+  if (user) {
+    if (dot) dot.style.background = '#00ff88';
+    if (label) { label.textContent = 'Conectado'; label.style.color = '#00ff88'; }
+  } else {
+    if (dot) dot.style.background = '#777';
+    if (label) { label.textContent = 'Desconectado'; label.style.color = 'var(--tm)'; }
+  }
+}
+
+// ══ EPIC ══
+function linkEpic() {
+  var saved = '';
+  try { var u = JSON.parse(localStorage.getItem('dg_user')||'{}'); saved = u.epic || ''; } catch(e){}
+  if (saved) {
+    if (confirm('¿Tu Epic es "' + saved + '"? (Cancelar para desvincular)')) {
+      toast('🎮 Epic: ' + saved, 'info');
+    } else {
+      setEpicLink('');
+      toast('Epic desvinculado','info');
+    }
+    return;
+  }
+  var user = prompt('Ingresá tu usuario de Epic Games:');
+  if (user && user.trim()) {
+    setEpicLink(user.trim());
+    toast('✅ Epic vinculado!','success');
+  }
+}
+
+function setEpicLink(user) {
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('dg_user')||'{}'); } catch(e){}
+  u.epic = user;
+  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e){}
+  updateEpicStatus(user);
+  if (SB_READY && currentUserId) {
+    try { sb.from('profiles').update({ epic: user }).eq('id', currentUserId).then(function(){}); } catch(e){}
+  }
+}
+
+function updateEpicStatus(user) {
+  var dot = document.getElementById('epicDot');
+  var label = document.getElementById('epicLabel');
+  if (user) {
+    if (dot) dot.style.background = '#00ff88';
+    if (label) { label.textContent = 'Conectado'; label.style.color = '#00ff88'; }
+  } else {
+    if (dot) dot.style.background = '#777';
+    if (label) { label.textContent = 'Desconectado'; label.style.color = 'var(--tm)'; }
+  }
+}
+
+// Load gaming status on profile load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function(){
+    try {
+      var u = JSON.parse(localStorage.getItem('dg_user')||'{}');
+      updateSteamStatus(u.steam || '');
+      updateEpicStatus(u.epic || '');
+    } catch(e){}
+  }, 1400);
+});
+// ══ EA / BATTLE.NET / UBISOFT ══
+function linkGenericGaming(key, displayName, dotId, labelId) {
+  var saved = '';
+  try { var u = JSON.parse(localStorage.getItem('dg_user')||'{}'); saved = u[key] || ''; } catch(e){}
+  if (saved) {
+    if (confirm('Tu ' + displayName + ' es "' + saved + '". ¿Desvincular?')) {
+      setGenericGaming(key, '', dotId, labelId);
+      toast(displayName + ' desvinculado','info');
+    }
+    return;
+  }
+  var user = prompt('Ingresá tu usuario de ' + displayName + ':');
+  if (user && user.trim()) {
+    setGenericGaming(key, user.trim(), dotId, labelId);
+    toast('✅ ' + displayName + ' vinculado!','success');
+  }
+}
+
+function setGenericGaming(key, user, dotId, labelId) {
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('dg_user')||'{}'); } catch(e){}
+  u[key] = user;
+  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e){}
+  updateGenericStatus(user, dotId, labelId);
+  if (SB_READY && currentUserId) {
+    var upd = {}; upd[key] = user;
+    try { sb.from('profiles').update(upd).eq('id', currentUserId).then(function(){}); } catch(e){}
+  }
+}
+
+function updateGenericStatus(user, dotId, labelId) {
+  var dot = document.getElementById(dotId);
+  var label = document.getElementById(labelId);
+  if (user) {
+    if (dot) dot.style.background = '#00ff88';
+    if (label) { label.textContent = 'Conectado'; label.style.color = '#00ff88'; }
+  } else {
+    if (dot) dot.style.background = '#777';
+    if (label) { label.textContent = 'Desconectado'; label.style.color = 'var(--tm)'; }
+  }
+}
+
+function linkEA() { linkGenericGaming('ea', 'EA', 'eaDot', 'eaLabel'); }
+function linkBnet() { linkGenericGaming('bnet', 'Battle.net', 'bnetDot', 'bnetLabel'); }
+function linkUbi() { linkGenericGaming('ubi', 'Ubisoft', 'ubiDot', 'ubiLabel'); }
+
+// Load status on profile load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function(){
+    try {
+      var u = JSON.parse(localStorage.getItem('dg_user')||'{}');
+      updateGenericStatus(u.ea||'', 'eaDot', 'eaLabel');
+      updateGenericStatus(u.bnet||'', 'bnetDot', 'bnetLabel');
+      updateGenericStatus(u.ubi||'', 'ubiDot', 'ubiLabel');
+    } catch(e){}
+  }, 1500);
+});
 </script>
 
 <!-- SUPABASE SETUP MODAL -->
