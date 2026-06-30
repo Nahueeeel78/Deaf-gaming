@@ -3533,21 +3533,56 @@ var callPollInterval = null;
 var lastCallCheck = new Date().toISOString();
 
 // Escuchar llamadas entrantes (se ejecuta al entrar al app)
+var processedCalls = {};
+var callCheckSince = new Date().toISOString();
+
 function startCallListener() {
   if (!SB_READY || !currentUserId) return;
-  // Realtime para llamadas dirigidas a mí
+  callCheckSince = new Date().toISOString();
+  // 1. Realtime (rápido)
   try {
     if (callChannel) sb.removeChannel(callChannel);
-    callChannel = sb.channel('calls-' + currentUserId)
+    callChannel = sb.channel('calls-' + currentUserId + '-' + Date.now())
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'calls',
         filter: 'to_id=eq.' + currentUserId
       }, function(payload) {
-        handleCallSignal(payload.new);
+        if (payload.new && payload.new.id && !processedCalls[payload.new.id]) {
+          processedCalls[payload.new.id] = true;
+          handleCallSignal(payload.new);
+        }
       })
       .subscribe();
-    console.log('📞 Escuchando llamadas...');
+    console.log('📞 Realtime de llamadas activo');
   } catch(e) { console.log('Call listener error:', e.message); }
+
+  // 2. Polling de respaldo (revisa cada 2.5 seg por si realtime falla)
+  if (callPollInterval) clearInterval(callPollInterval);
+  callPollInterval = setInterval(checkIncomingCalls, 2500);
+}
+
+async function checkIncomingCalls() {
+  if (!SB_READY || !currentUserId) return;
+  try {
+    var r = await sb.from('calls')
+      .select('*')
+      .eq('to_id', currentUserId)
+      .eq('type', 'offer')
+      .gte('created_at', callCheckSince)
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (r.data && r.data.length > 0) {
+      r.data.forEach(function(call) {
+        if (!processedCalls[call.id]) {
+          processedCalls[call.id] = true;
+          // Solo si no hay ya una llamada en pantalla
+          if (!document.getElementById('incomingCallModal') && !document.getElementById('activeCallModal')) {
+            handleCallSignal(call);
+          }
+        }
+      });
+    }
+  } catch(e) { /* silencioso */ }
 }
 
 // Procesar señales de llamada (offer, answer, ice)
