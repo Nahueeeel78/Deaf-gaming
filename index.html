@@ -407,6 +407,36 @@ body.font-serif *{font-family:Georgia,serif!important;}
 @keyframes igGlow{ 0%,100%{ box-shadow:0 0 10px rgba(255,0,110,.6); } 50%{ box-shadow:0 0 24px rgba(255,0,110,1),0 0 40px rgba(255,45,120,.7); } }
 @keyframes fbGlow{ 0%,100%{ box-shadow:0 0 8px rgba(24,119,242,.5); } 50%{ box-shadow:0 0 20px rgba(24,119,242,.9),0 0 32px rgba(24,119,242,.5); } }
 
+
+/* ── CHAT ROWS estilo WhatsApp ── */
+.cr{
+  display:flex;align-items:center;gap:14px;padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .2s;cursor:pointer;
+}
+.cr:active{ background:rgba(0,245,255,.06); }
+.crav{
+  width:54px;height:54px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;overflow:hidden;background-size:cover;background-position:center;
+  border:2px solid rgba(0,245,255,.2);
+}
+.crb{ flex:1;min-width:0; }
+.crn{
+  font-size:16px;font-weight:700;color:var(--tx);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;
+}
+.crs{
+  font-size:13px;color:var(--tm);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cr-time{ font-size:11px;color:var(--tm);flex-shrink:0;align-self:flex-start;margin-top:4px; }
+.cr-badge{
+  background:var(--g);color:#000;border-radius:99px;min-width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;
+  padding:0 6px;flex-shrink:0;
+}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -2580,11 +2610,23 @@ async function sbLoadContacts() {
       div.className = 'cr';
       div.id = 'contact-'+profile.id;
       div.style.cursor = 'pointer';
+      // Avatar: foto real o emoji
+      var avContent = profile.photo_url
+        ? 'background-image:url('+profile.photo_url+');'
+        : 'background:linear-gradient(135deg,var(--c),var(--p));';
+      var avInner = profile.photo_url ? '' : (profile.avatar||'🧑');
+      // Punto online
+      var onlineDot = profile.online
+        ? '<span style="position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:#00ff88;border:2px solid var(--bg);"></span>'
+        : '';
       div.innerHTML =
-        '<div class="crav" style="font-size:26px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--c),var(--p));">'+(profile.avatar||'🧑')+'</div>'+
+        '<div style="position:relative;flex-shrink:0;">'+
+          '<div class="crav" style="'+avContent+'">'+avInner+'</div>'+
+          onlineDot+
+        '</div>'+
         '<div class="crb">'+
           '<div class="crn">'+(profile.name||'Usuario')+'</div>'+
-          '<div class="crs" id="last-msg-'+profile.id+'">Toca para chatear</div>'+
+          '<div class="crs" id="last-msg-'+profile.id+'">'+(profile.online?'🟢 En línea':'Toca para chatear')+'</div>'+
         '</div>';
       div.onclick = function() { openRealChat(profile.id, profile.name||'Usuario', profile.avatar||'🧑'); };
       if (cl) cl.appendChild(div);
