@@ -2838,7 +2838,20 @@ async function loginExisting() {
       }
     } catch(e) { toast('Error: '+(e.message||''),'error'); return; }
   }
-  // Local check
+  // Backup local: lista de usuarios creados en este dispositivo
+  try {
+    var users = JSON.parse(localStorage.getItem('dg_all_users')||'{}');
+    if (users[username]) {
+      var lu = users[username];
+      currentUserId = username;
+      applyFullProfile(lu);
+      try { localStorage.setItem('dg_user', JSON.stringify(lu)); } catch(e) {}
+      toast('¡Bienvenido '+lu.n+'! 🎮','success');
+      setTimeout(function(){ finish(); }, 400);
+      return;
+    }
+  } catch(e) {}
+  // Ultimo intento: usuario guardado actual
   try {
     var saved = JSON.parse(localStorage.getItem('dg_user')||'null');
     if (saved && saved.username === username) {
@@ -2848,7 +2861,7 @@ async function loginExisting() {
       return;
     }
   } catch(e) {}
-  toast('Usuario no encontrado','error');
+  toast('Usuario no encontrado. Verificá que lo escribiste igual.','error');
 }
 
 function startRegister() {
@@ -2960,16 +2973,26 @@ function applyFullProfile(u) {
 
 
 function saveProfileToSupabase() {
-  if (!SB_READY || !regData.username) return;
-  // Delay so it runs AFTER the app is shown — never blocks entry
-  setTimeout(function() {
+  if (!regData.username) return;
+  // Guardar tambien en lista local de usuarios (backup si Supabase falla)
+  try {
+    var users = JSON.parse(localStorage.getItem('dg_all_users')||'{}');
+    users[regData.username] = {
+      n: regData.name, username: regData.username, av: regData.avatar||'🧑',
+      b: regData.bio||'Deaf Gamer', theme: regData.theme||'cyber', country: regData.country||''
+    };
+    localStorage.setItem('dg_all_users', JSON.stringify(users));
+  } catch(e){}
+  if (!SB_READY) return;
+  // Guardar en Supabase
+  function doSave() {
     try {
       var meta = {
         id: '' + regData.username,
         username: '' + regData.username,
         name: '' + regData.name,
-        avatar: '' + (regData.avatar || ''),
-        bio: '' + (regData.bio || ''),
+        avatar: '' + (regData.avatar || '🧑'),
+        bio: '' + (regData.bio || 'Deaf Gamer'),
         country: '' + (regData.country || ''),
         theme: '' + (regData.theme || 'cyber')
       };
@@ -2977,15 +3000,16 @@ function saveProfileToSupabase() {
       if (p && typeof p.then === 'function') {
         p.then(function(r){
           if (r && r.error) console.log('Supabase save: ' + (r.error.message||'error'));
-          else console.log('Perfil guardado en la nube OK');
+          else console.log('✅ Perfil guardado en la nube');
         });
       }
     } catch(e) {
-      console.log('Supabase save skipped: ' + (e && e.message || 'error'));
+      console.log('Supabase save error: ' + (e && e.message || 'error'));
     }
-  }, 1500);
+  }
+  doSave();
+  setTimeout(doSave, 2000); // reintentar por las dudas
 }
-
 function finishRegister() {
   try {
     var bio = ((document.getElementById('regBio')||{}).value||'').trim() || '\uD83E\uDD1F Deaf Gamer';
