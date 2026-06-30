@@ -2237,15 +2237,89 @@ function addFoundContact() {
 }
 
 // \u2550\u2550 CONTACT VIEW \u2550\u2550
-function viewContact() {
-  var nm=document.getElementById('cd-name').textContent||'Contacto';
-  var av=document.getElementById('cd-av').textContent||'\uD83D\uDC64';
-  document.getElementById('contactViewName').textContent=nm;
-  document.getElementById('contactViewAv').textContent=av;
-  document.getElementById('contactViewPhone').textContent='+54 ...';
-  openModal('contactModal');
+async function viewContact() {
+  if (!currentChatUserId) return;
+  if (!SB_READY) { toast('Sin conexión','error'); return; }
+  toast('Cargando perfil...','info');
+  try {
+    var r = await sb.from('profiles').select('*').eq('id', currentChatUserId).maybeSingle();
+    if (!r.data) { toast('No se pudo cargar el perfil','error'); return; }
+    showContactProfile(r.data);
+  } catch(e) { toast('Error: '+(e.message||''),'error'); }
 }
 
+function showContactProfile(p) {
+  var existing = document.getElementById('contactProfileModal');
+  if (existing) existing.remove();
+
+  // Verificar si ya es amigo
+  var amigos = [];
+  try { amigos = JSON.parse(localStorage.getItem('dg_friends')||'[]'); } catch(e){}
+  var esAmigo = amigos.indexOf(p.id) >= 0;
+
+  // Plataformas
+  var platChips = '';
+  if (p.platforms && p.platforms.length) {
+    p.platforms.forEach(function(pf){
+      platChips += '<span style="background:rgba(0,245,255,.1);border:1px solid rgba(0,245,255,.3);border-radius:99px;padding:6px 12px;font-size:12px;color:var(--c);">'+pf+'</span>';
+    });
+  }
+
+  // Avatar
+  var avHtml = p.photo_url
+    ? '<div style="width:100px;height:100px;border-radius:50%;background-image:url('+p.photo_url+');background-size:cover;background-position:center;border:3px solid var(--c);margin:0 auto;"></div>'
+    : '<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:50px;margin:0 auto;border:3px solid var(--c);">'+(p.avatar||'🧑')+'</div>';
+
+  var modal = document.createElement('div');
+  modal.id = 'contactProfileModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto;padding:20px;box-sizing:border-box;';
+  modal.innerHTML =
+    '<div style="max-width:440px;margin:30px auto;background:linear-gradient(135deg,#0a0e1a,#120a1f);border:1px solid rgba(0,245,255,.25);border-radius:24px;padding:24px;text-align:center;">' +
+      '<div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><button onclick="closeContactProfile()" style="background:rgba(255,255,255,.08);border:none;border-radius:50%;width:36px;height:36px;color:var(--tx);font-size:20px;cursor:pointer;-webkit-appearance:none;">×</button></div>' +
+      avHtml +
+      '<div style="font-size:22px;font-weight:900;color:var(--tx);margin-top:14px;">'+(p.name||'Usuario')+'</div>' +
+      '<div style="font-size:13px;color:var(--tm);margin-bottom:4px;">@'+(p.username||'user')+'</div>' +
+      (p.online ? '<div style="font-size:13px;color:#00ff88;margin-bottom:10px;">🟢 En línea</div>' : '<div style="font-size:13px;color:var(--tm);margin-bottom:10px;">⚪ Desconectado</div>') +
+      '<div style="font-size:14px;color:var(--tx);line-height:1.5;margin-bottom:16px;padding:0 10px;">'+(p.bio||'🤟 Deaf Gamer')+'</div>' +
+      (p.country ? '<div style="display:inline-block;background:rgba(255,255,255,.06);border-radius:99px;padding:6px 16px;font-size:13px;color:var(--tx);margin-bottom:10px;">'+p.country+'</div>' : '') +
+      (p.rank ? '<div style="margin-bottom:10px;"><span style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,140,0,.08));border:1px solid rgba(255,215,0,.3);border-radius:99px;padding:7px 16px;font-size:13px;font-weight:800;color:#ffd700;">🏆 '+p.rank+'</span></div>' : '') +
+      (p.game ? '<div style="margin-bottom:10px;"><span style="display:inline-flex;align-items:center;gap:6px;background:rgba(191,0,255,.1);border:1px solid rgba(191,0,255,.3);border-radius:99px;padding:7px 16px;font-size:13px;font-weight:700;color:var(--p);">🎯 '+p.game+'</span></div>' : '') +
+      (platChips ? '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0;">'+platChips+'</div>' : '') +
+      (p.phone && p.phone_public ? '<div style="font-size:14px;color:var(--c);margin-bottom:16px;">📱 '+p.phone+'</div>' : '') +
+      '<div style="display:flex;gap:10px;margin-top:18px;">' +
+        '<button id="friendBtn" onclick="toggleFriend(\''+p.id+'\',\''+(p.name||'Usuario').replace(/\x27/g,'')+'\')" style="flex:1;background:'+(esAmigo?'rgba(255,59,48,.15);border:1.5px solid #ff3b30;color:#ff3b30':'linear-gradient(135deg,var(--c),var(--p));border:none;color:#000')+';border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;-webkit-appearance:none;">'+(esAmigo?'✓ Amigo':'➕ Agregar amigo')+'</button>' +
+        '<button onclick="closeContactProfile()" style="flex:1;background:rgba(0,245,255,.1);border:1.5px solid var(--c);color:var(--c);border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;-webkit-appearance:none;">💬 Chatear</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function closeContactProfile() {
+  var m = document.getElementById('contactProfileModal');
+  if (m) m.remove();
+}
+
+function toggleFriend(friendId, friendName) {
+  var amigos = [];
+  try { amigos = JSON.parse(localStorage.getItem('dg_friends')||'[]'); } catch(e){}
+  var i = amigos.indexOf(friendId);
+  var btn = document.getElementById('friendBtn');
+  if (i >= 0) {
+    // Quitar amigo
+    amigos.splice(i, 1);
+    if (btn) { btn.innerHTML = '➕ Agregar amigo'; btn.style.cssText = 'flex:1;background:linear-gradient(135deg,var(--c),var(--p));border:none;color:#000;border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;-webkit-appearance:none;'; }
+    toast(friendName+' quitado de amigos','info');
+  } else {
+    // Agregar amigo
+    amigos.push(friendId);
+    if (btn) { btn.innerHTML = '✓ Amigo'; btn.style.cssText = 'flex:1;background:rgba(255,59,48,.15);border:1.5px solid #ff3b30;color:#ff3b30;border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;-webkit-appearance:none;'; }
+    toast('✅ '+friendName+' agregado como amigo!','success');
+  }
+  try { localStorage.setItem('dg_friends', JSON.stringify(amigos)); } catch(e){}
+  // Actualizar contador de amigos en perfil
+  var sf = document.getElementById('statFriends');
+  if (sf) sf.textContent = amigos.length;
+}
 // \u2550\u2550 INCOMING CALL \u2550\u2550
 function simulateIncomingCall(name,av){
   document.getElementById('icName').textContent=name||'Alguien';
@@ -3093,6 +3167,8 @@ function updateProfileStats() {
         var sf = document.getElementById('statContacts');
         var so = document.getElementById('statOnline');
         var sfr = document.getElementById('statFriends');
+        try { var amigos = JSON.parse(localStorage.getItem('dg_friends')||'[]'); if (sfr) sfr.textContent = amigos.length; } catch(e) {}
+        var sfr_unused = document.getElementById('statFriends');
         if (sf) sf.textContent = contactos;
         if (so) so.textContent = conectados;
         if (sfr) sfr.textContent = contactos;
