@@ -131,7 +131,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .prh{padding:28px 18px 18px;text-align:center;background:linear-gradient(180deg,rgba(0,245,255,.06),transparent);position:relative;}
 .prav{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:46px;border:3px solid var(--bg);margin:0 auto 12px;animation:ap 4s ease-in-out infinite;overflow:hidden;position:relative;}
 @keyframes ap{0%,100%{box-shadow:0 0 20px rgba(0,245,255,.25);}50%{box-shadow:0 0 36px rgba(0,245,255,.5);}}
-.pr-cam{position:absolute;bottom:0;right:calc(50% - 50px);width:32px;height:32px;border-radius:50%;background:var(--c);border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+.pr-cam{position:absolute;bottom:0;right:-4px;width:32px;height:32px;border-radius:50%;background:var(--c);border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;z-index:4;}
 .pr-name{font-size:22px;font-weight:800;margin-bottom:4px;}
 .pr-bio{font-size:14px;color:var(--tm);margin-bottom:8px;}
 .pr-phone{font-size:13px;color:var(--c);}
@@ -218,7 +218,7 @@ body.theme-neon{--c:#39ff14;--p:#ff073a;--g:#0ff;--r:#ff6600;--bg:#020202;--bc:#
 
 /* ── PROFILE BANNER ── */
 .pr-banner{
-  width:100%;height:140px;position:relative;overflow:hidden;flex-shrink:0;min-height:140px;
+  width:100%;height:200px;position:relative;overflow:hidden;flex-shrink:0;min-height:200px;
   background:linear-gradient(135deg,var(--bc),var(--b2));
 }
 .pr-banner-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
@@ -230,7 +230,7 @@ body.theme-neon{--c:#39ff14;--p:#ff073a;--g:#0ff;--r:#ff6600;--bg:#020202;--bc:#
 .pr-banner-edit:active{opacity:.7;}
 
 /* ── PROFILE AVATAR overlapping banner ── */
-.prav-wrap{margin-top:-54px;margin-bottom:12px;position:relative;display:inline-block;z-index:2;}
+.prav-wrap{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:3;}
 .prav{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:46px;border:4px solid var(--bg);animation:ap 4s ease-in-out infinite;overflow:hidden;position:relative;}
 @keyframes ap{0%,100%{box-shadow:0 0 20px rgba(0,245,255,.25);}50%{box-shadow:0 0 36px rgba(0,245,255,.5);}}
 .pr-cam{position:absolute;bottom:2px;right:2px;width:32px;height:32px;border-radius:50%;background:var(--c);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;-webkit-appearance:none;border-width:0;z-index:2;}
@@ -371,6 +371,32 @@ body.font-rounded *{font-family:'Comic Sans MS',cursive!important;}
 body.font-mono *{font-family:monospace!important;}
 body.font-serif *{font-family:Georgia,serif!important;}
 
+
+.fab-neon{
+  animation: fabFloat 2.5s ease-in-out infinite, fabGlow 2s ease-in-out infinite;
+  display:flex;align-items:center;justify-content:center;
+}
+@keyframes fabFloat{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-8px); }
+}
+@keyframes fabGlow{
+  0%,100%{ box-shadow: 0 0 12px rgba(0,245,255,.6), 0 0 24px rgba(191,0,255,.4); }
+  50%{ box-shadow: 0 0 24px rgba(0,245,255,.9), 0 0 48px rgba(191,0,255,.7), 0 0 64px rgba(0,245,255,.3); }
+}
+.fab-neon:active{ transform: scale(.92); }
+
+
+@keyframes shimmer{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+
+
+.pfbtn,.rkbtn{padding:9px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--tx);font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;}
+.pfbtn.active,.rkbtn.active{border-color:var(--c);background:rgba(0,245,255,.12);color:var(--c);}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -506,6 +532,7 @@ body.font-serif *{font-family:Georgia,serif!important;}
   </div>
 
 </div>
+</div>
 
 <!-- APP -->
 <div id="app">
@@ -533,13 +560,16 @@ body.font-serif *{font-family:Georgia,serif!important;}
 
   <div class="screens" id="screens">
     <!-- CHATS -->
-    <div class="sc active" id="sc-chats" class="sc active">
+    <div class="sc active" id="sc-chats">
       
       <div id="chatList">
         <div class="empty" id="chatListEmpty"><div class="empty-ic">💬</div><div class="empty-t">Sin chats aún</div><div class="empty-s">Agrega un contacto para empezar</div><button onclick="openAddContact()" style="margin-top:16px;padding:12px 24px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--c),var(--p));color:#000;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;">+ Agregar contacto</button></div>
       </div>
       <button class="fab" onclick="toast('💬 Nuevo chat — requiere Supabase','info')">💬</button>
-    </div>
+          <button class="fab fab-neon" onclick="openAddContact()" title="Nuevo chat">
+        <svg width="26" height="26" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </button>
+</div>
 
     <!-- ESTADOS -->
     <div class="sc" id="sc-states">
@@ -567,7 +597,9 @@ body.font-serif *{font-family:Georgia,serif!important;}
       
       <div id="groupList"></div>
       <div id="gEmpty" class="empty"><div class="empty-ic">👥</div><div class="empty-t">Sin grupos</div><div class="empty-s">Crea un grupo para chatear con varios amigos</div></div>
-      <button class="fab" onclick="createGroup()">👥</button>
+      <button class="fab fab-neon" onclick="createGroup()" title="Nuevo grupo">
+        <svg width="26" height="26" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </button>
     </div>
 
     <!-- PERFIL -->
@@ -577,22 +609,66 @@ body.font-serif *{font-family:Georgia,serif!important;}
         <div class="pr-banner-glow"></div>
         <img id="bannerImg" class="pr-banner-img" style="display:none">
         <div class="pr-banner-blur" id="bannerBlur"></div>
-        <button onclick="openBannerPicker()" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.25);border-radius:99px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);">
-  <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-</button>
-      </div>
-      <!-- AVATAR + INFO -->
-      <div style="text-align:center;padding:0 18px 16px;position:relative;z-index:1;">
+        <!-- ÚNICO BOTÓN EDITAR (chico, redondo) -->
+        <button onclick="openEditProfile()" title="Editar perfil" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);border:1.5px solid var(--c);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:4;">
+          <svg width="17" height="17" fill="none" stroke="var(--c)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+        </button>
+        <!-- AVATAR INSIDE BANNER (sin camarita) -->
         <div class="prav-wrap">
           <div class="prav" id="prav">🧑</div>
-          <div class="pr-cam" onclick="openPhotoPicker()">📷</div>
         </div>
-        <div style="font-size:23px;font-weight:900;margin-bottom:4px;" id="pname2">Tú</div>
-        <div style="font-size:14px;color:var(--tm);margin-bottom:8px;line-height:1.4;" id="pbio2">🤟 Deaf Gamer</div>
-        <div style="font-size:13px;color:var(--c);margin-bottom:10px;">📱 <span id="pphone">+1 555</span></div>
-        
       </div>
-      <!-- action buttons removed -->
+      <!-- INFO -->
+      <div style="text-align:center;padding:14px 18px 16px;position:relative;z-index:1;">
+        <div style="font-size:23px;font-weight:900;margin-bottom:4px;" id="pname2">Tú</div>
+        <div style="font-size:14px;color:var(--tm);margin-bottom:12px;line-height:1.4;" id="pbio2">🤟 Deaf Gamer</div>
+
+        <!-- NÚMERO con ocultar/mostrar -->
+        <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.2);border-radius:99px;padding:10px 18px;margin-bottom:16px;">
+          <span style="font-size:22px;">📱</span>
+          <span style="font-size:15px;font-weight:700;color:var(--c);" id="pphone">+1 555</span>
+          <button onclick="togglePhoneVisibility()" id="phoneToggleBtn" style="background:rgba(0,245,255,.15);border:none;border-radius:99px;padding:5px 12px;color:var(--c);font-size:11px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-left:4px;">👁️ Mostrar</button>
+        </div>
+
+        <!-- CHIPS: RANGO | JUEGO en línea -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">
+          <div id="profRankWrap" style="display:none;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,140,0,.08));border:1px solid rgba(255,215,0,.3);border-radius:99px;padding:8px 16px;">
+              <span style="font-size:16px;">🏆</span>
+              <span style="font-size:13px;font-weight:800;color:#ffd700;" id="profRank">Sin rango</span>
+            </div>
+          </div>
+          <div id="profGameWrap" style="display:none;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(191,0,255,.1);border:1px solid rgba(191,0,255,.3);border-radius:99px;padding:8px 16px;">
+              <span style="font-size:16px;">🎯</span>
+              <span style="font-size:13px;font-weight:700;color:var(--p);" id="profGame">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATAFORMAS en chips -->
+        <div id="profPlatformsWrap" style="display:none;margin-bottom:4px;">
+          <div style="font-size:11px;color:var(--tm);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Mis plataformas</div>
+          <div id="profPlatforms" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"></div>
+        </div>
+      </div>
+      <!-- INSTAGRAM STATS -->
+      <div style="display:flex;justify-content:space-around;padding:14px 18px;margin:0 16px 16px;background:var(--bc);border-radius:18px;border:1px solid rgba(0,245,255,.12);">
+        <div onclick="navTo(null,'friends-tab')" style="text-align:center;cursor:pointer;flex:1;">
+          <div style="font-size:22px;font-weight:900;color:var(--c);" id="statFriends">0</div>
+          <div style="font-size:12px;color:var(--tm);margin-top:2px;">Amigos</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,.08);"></div>
+        <div onclick="navTo(null,'online-tab')" style="text-align:center;cursor:pointer;flex:1;">
+          <div style="font-size:22px;font-weight:900;color:var(--g);" id="statOnline">0</div>
+          <div style="font-size:12px;color:var(--tm);margin-top:2px;">Conectados</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,.08);"></div>
+        <div onclick="navTo(null,'contacts-tab')" style="text-align:center;cursor:pointer;flex:1;">
+          <div style="font-size:22px;font-weight:900;color:var(--p);" id="statContacts">0</div>
+          <div style="font-size:12px;color:var(--tm);margin-top:2px;">Contactos</div>
+        </div>
+      </div>
       <!-- INFO CARD -->
       <div class="card">
         <div class="row" onclick="editField('name')">
@@ -687,6 +763,57 @@ body.font-serif *{font-family:Georgia,serif!important;}
         <div class="row"><div class="row-ic">ℹ️</div><div class="row-t"><div class="row-t1" id="t-about">Acerca de Deaf Gaming</div><div class="row-t2">v2.0.0</div></div><div class="row-arr">›</div></div>
         <div class="row" onclick="logout()"><div class="row-ic" style="color:var(--r);">🚪</div><div class="row-t"><div class="row-t1" style="color:var(--r);" id="t-logout">Cerrar sesión</div></div></div>
       </div>
+
+      <!-- ══ SOPORTE / WHATSAPP (LUJO) ══ -->
+      <div class="stitle">🆘 Soporte urgente</div>
+      <div style="margin:0 16px 16px;border-radius:22px;padding:2px;background:linear-gradient(135deg,#25D366,#128C7E,#25D366);background-size:200% 200%;animation:shimmer 3s ease infinite;box-shadow:0 8px 32px rgba(37,211,102,.25);">
+        <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#0a1410,#0d1f17);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;box-shadow:0 0 20px rgba(37,211,102,.5);">💬</div>
+            <div>
+              <div style="font-size:17px;font-weight:900;color:#fff;letter-spacing:.3px;">Soporte Directo</div>
+              <div style="font-size:12.5px;color:#25D366;font-weight:600;">Respondemos al instante 24/7</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:#cbd5e1;line-height:1.5;margin-bottom:14px;">¿Tenés un problema, una duda o querés reportar algo? Escribinos directo por WhatsApp y te ayudamos enseguida. También podés hacer videollamada con lengua de señas. 🤟</div>
+          <button onclick="window.open('https://wa.me/5491125628797?text=Hola!%20Necesito%20ayuda%20con%20Deaf%20Gaming','_blank')" style="width:100%;background:linear-gradient(135deg,#25D366,#1ebe5d);border:none;border-radius:14px;padding:15px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(37,211,102,.4);">
+            💬 Enviar mensaje
+          </button>
+          <button onclick="window.open('https://wa.me/5491125628797?call','_blank')" style="width:100%;background:rgba(37,211,102,.12);border:1.5px solid #25D366;border-radius:14px;padding:14px;color:#25D366;font-size:14px;font-weight:800;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:flex;align-items:center;justify-content:center;gap:8px;">
+            📹 Videollamada o llamada
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ APOYAR A DEAF GAMING (LUJO) ══ -->
+      <div class="stitle">👑 Apoyá a Deaf Gaming</div>
+      <div style="margin:0 16px 16px;border-radius:22px;padding:2px;background:linear-gradient(135deg,#00f5ff,#bf00ff,#ff006e,#00f5ff);background-size:300% 300%;animation:shimmer 4s ease infinite;box-shadow:0 8px 32px rgba(191,0,255,.3);">
+        <div style="border-radius:20px;padding:22px;background:linear-gradient(135deg,#0a0e1a,#120a1f);">
+          <div style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:36px;margin-bottom:8px;">💜🎮🤟</div>
+            <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">Tu apoyo hace la diferencia</div>
+            <div style="font-size:13.5px;color:#cbd5e1;line-height:1.55;margin-bottom:4px;">Deaf Gaming es <b style="color:var(--c);">100% gratis</b> para la comunidad sorda gamer. Tu aporte nos ayuda a pagar los servidores, mejorar las videollamadas y agregar nuevas funciones. 🚀</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:12px;margin:16px 0;font-size:12.5px;color:#cbd5e1;line-height:1.6;">
+            <div style="margin-bottom:5px;">✅ Mantenés el app gratis para todos</div>
+            <div style="margin-bottom:5px;">✅ Ayudás a mejorar las videollamadas</div>
+            <div>✅ Apoyás a la comunidad sorda 🤟</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <button onclick="donar(5000)" style="width:100%;background:rgba(0,245,255,.08);border:1.5px solid var(--c);border-radius:16px;padding:16px;color:var(--c);cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between;">
+              <span style="text-align:left;"><div style="font-size:16px;font-weight:800;">☕ Apoyo Café</div><div style="font-size:11px;opacity:.8;font-weight:500;">Un cafecito para seguir</div></span><span style="font-size:20px;font-weight:900;">$5.000</span>
+            </button>
+            <button onclick="donar(10000)" style="width:100%;background:rgba(191,0,255,.1);border:1.5px solid var(--p);border-radius:16px;padding:16px;color:var(--p);cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between;">
+              <span style="text-align:left;"><div style="font-size:16px;font-weight:800;">🎮 Apoyo Gamer</div><div style="font-size:11px;opacity:.8;font-weight:500;">Ayuda con los servidores</div></span><span style="font-size:20px;font-weight:900;">$10.000</span>
+            </button>
+            <button onclick="donar(15000)" style="width:100%;background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;border-radius:16px;padding:17px;color:#000;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(255,215,0,.4);">
+              <span style="text-align:left;"><div style="font-size:16px;font-weight:900;">👑 Sponsor PRO</div><div style="font-size:11px;opacity:.75;font-weight:600;">El máximo apoyo ⭐</div></span><span style="font-size:20px;font-weight:900;">$15.000</span>
+            </button>
+          </div>
+          <div style="font-size:11.5px;color:var(--tm);text-align:center;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:5px;">🔒 Pago 100% seguro con Mercado Pago</div>
+        </div>
+      </div>
+
       <div style="height:24px;"></div>
     </div>
 
@@ -1763,31 +1890,24 @@ function finishSetup() {
   setTimeout(function(){ finish(); }, 400);
 }
 function finish() {
-  // Stop canvas
-  if (typeof lRunning !== 'undefined') lRunning = false;
-  if (typeof lRaf !== 'undefined' && lRaf) { cancelAnimationFrame(lRaf); lRaf = null; }
-  // Hide canvas and login bg
-  var cv = document.getElementById('loginCanvas'); if (cv) cv.style.display = 'none';
-  var loBg = document.getElementById('loBg'); if (loBg) loBg.style.display = 'none';
-  // Hide login
-  var lo = document.getElementById('lo');
-  if (lo) { lo.style.opacity='0'; setTimeout(function(){ lo.style.display='none'; }, 400); }
-  // Show app
+  try { if (typeof lRunning !== 'undefined') lRunning = false; } catch(e){}
+  try { if (typeof lRaf !== 'undefined' && lRaf) { cancelAnimationFrame(lRaf); lRaf=null; } } catch(e){}
+  var cv = document.getElementById('loginCanvas'); if (cv) cv.style.display='none';
+  var loBg = document.getElementById('loBg'); if (loBg) loBg.style.display='none';
+  var lo = document.getElementById('lo'); if (lo) lo.style.display='none';
   var app = document.getElementById('app');
-  if (!app) { console.error('No app div found!'); return; }
+  if (!app) return;
   app.style.display = 'flex';
+  app.style.opacity = '1';
   app.style.zIndex = '9999';
   app.style.background = 'var(--bg)';
-  setTimeout(function(){
-    app.style.opacity = '1';
-    // Activate chats screen
-    document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('active'); });
-    var sc = document.getElementById('sc-chats'); if (sc) sc.classList.add('active');
-    document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
-    var nb = document.querySelector('[data-s="chats"]'); if (nb) nb.classList.add('active');
-    // Load contacts
-    if (typeof sbLoadContacts === 'function') setTimeout(sbLoadContacts, 500);
-  }, 50);
+  // Activate chats
+  document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('active'); });
+  var sc = document.getElementById('sc-chats'); if (sc) sc.classList.add('active');
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
+  var nb = document.querySelector('[data-s="chats"]'); if (nb) nb.classList.add('active');
+  try { if (typeof sbLoadContacts === 'function') setTimeout(sbLoadContacts, 600); } catch(e){}
+  try { if (typeof updateProfileStats === 'function') setTimeout(updateProfileStats, 1000); } catch(e){}
 }
 
 function applyUser(u) {
@@ -1847,14 +1967,9 @@ window.addEventListener('load', function() {
   var saved=null;
   try{saved=JSON.parse(localStorage.getItem('dg_user')||'null');}catch(e){}
   if (saved && saved.n) {
-    applyUser(saved);
-    setTimeout(function(){
-      document.getElementById('lo').style.display='none';
-      var app=document.getElementById('app');
-      app.style.display='flex'; app.style.opacity='0';
-      app.style.transition='opacity .45s ease';
-      setTimeout(function(){app.style.opacity='1';initScrollHints();},40);
-    },800);
+    if (typeof applyFullProfile === 'function') applyFullProfile(saved);
+    else applyUser(saved);
+    setTimeout(function(){ finish(); }, 600);
   }
   startCanvas();
   // Demo: simulate incoming call after 8s (remove in production)
@@ -2702,67 +2817,97 @@ function setRegCountry(country, btn) {
 }
 
 function applyFullProfile(u) {
-  applyUser(u);
-  // Apply theme
+  try { applyUser(u); } catch(e) {}
   try { if (u.theme) setTheme(u.theme); } catch(e) {}
-  // Apply font
-  document.body.classList.remove('font-rounded','font-mono','font-serif');
-  if (u.font && u.font !== 'system') document.body.classList.add('font-'+u.font);
-  // Apply size
-  document.body.classList.remove('fontsize-small','fontsize-large');
-  if (u.size === 'small') document.body.classList.add('fontsize-small');
-  if (u.size === 'large') document.body.classList.add('fontsize-large');
-  // Apply photo to profile
-  if (u.photo) {
-    var prav = document.getElementById('prav');
-    if (prav) { prav.textContent=''; prav.style.backgroundImage='url('+u.photo+')'; prav.style.backgroundSize='cover'; prav.style.backgroundPosition='center'; }
-  }
-  // Apply banner
-  if (u.banner) {
-    var bImg = document.getElementById('bannerImg');
-    if (bImg) { bImg.src = u.banner; bImg.style.display='block'; }
-  }
-  // Country tag
-  if (u.country) {
-    var lt = document.getElementById('locationTag');
-    var ltt = document.getElementById('locationTagText');
-    if (lt && ltt) { ltt.textContent = u.country; lt.style.display='block'; }
-  }
+  try {
+    document.body.classList.remove('font-rounded','font-mono','font-serif');
+    if (u.font && u.font !== 'system') document.body.classList.add('font-'+u.font);
+    document.body.classList.remove('fontsize-small','fontsize-large');
+    if (u.size === 'small') document.body.classList.add('fontsize-small');
+    if (u.size === 'large') document.body.classList.add('fontsize-large');
+  } catch(e) {}
+  try {
+    if (u.photo) {
+      var prav = document.getElementById('prav');
+      if (prav) { prav.textContent=''; prav.style.backgroundImage='url('+u.photo+')'; prav.style.backgroundSize='cover'; prav.style.backgroundPosition='center'; }
+    }
+  } catch(e) {}
+  try {
+    if (u.banner) {
+      var bImg = document.getElementById('bannerImg');
+      if (bImg) { bImg.src = u.banner; bImg.style.display='block'; }
+    }
+  } catch(e) {}
+  try {
+    if (u.country) {
+      var lt = document.getElementById('locationTag');
+      var ltt = document.getElementById('locationTagText');
+      if (lt && ltt) { ltt.textContent = u.country; lt.style.display='block'; }
+    }
+  } catch(e) {}
+}
+
+
+function saveProfileToSupabase() {
+  if (!SB_READY || !regData.username) return;
+  // Delay so it runs AFTER the app is shown — never blocks entry
+  setTimeout(function() {
+    try {
+      var meta = {
+        id: '' + regData.username,
+        username: '' + regData.username,
+        name: '' + regData.name,
+        avatar: '' + (regData.avatar || ''),
+        bio: '' + (regData.bio || ''),
+        country: '' + (regData.country || ''),
+        theme: '' + (regData.theme || 'cyber')
+      };
+      var p = sb.from('profiles').upsert(meta);
+      if (p && typeof p.then === 'function') {
+        p.then(function(r){
+          if (r && r.error) console.log('Supabase save: ' + (r.error.message||'error'));
+          else console.log('Perfil guardado en la nube OK');
+        });
+      }
+    } catch(e) {
+      console.log('Supabase save skipped: ' + (e && e.message || 'error'));
+    }
+  }, 1500);
 }
 
 function finishRegister() {
-  var bio = ((document.getElementById('regBio')||{}).value||'').trim() || '🤟 Deaf Gamer';
-  regData.bio = bio;
-  // Build user object
-  var u = {
-    n: regData.name, b: regData.bio, p: '',
-    av: regData.avatar || '🧑', photo: regData.photo || '', banner: regData.banner || '',
-    username: regData.username, theme: regData.theme, font: regData.font,
-    size: regData.size, country: regData.country
-  };
-  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) {}
-  currentUserId = regData.username;
-  applyFullProfile(u);
-  toast('¡Perfil creado '+regData.name+'! 🎮🤟','success');
-  // Save to Supabase in background (NO photo/banner — too big, just metadata)
-  if (SB_READY) {
-    try {
-      sb.from('profiles').upsert({
-        id: regData.username,
-        username: regData.username,
-        name: regData.name,
-        avatar: regData.avatar || '🧑',
-        bio: regData.bio,
-        country: regData.country,
-        theme: regData.theme,
-        created_at: new Date().toISOString()
-      }).then(function(r){
-        if (r && r.error) console.log('Save: '+(r.error.message||''));
-        else console.log('Profile saved OK');
-      }).catch(function(e){ console.log('Save err'); });
-    } catch(e) {}
+  try {
+    var bio = ((document.getElementById('regBio')||{}).value||'').trim() || '\uD83E\uDD1F Deaf Gamer';
+    regData.bio = bio;
+    var u = {
+      n: regData.name, b: regData.bio, p: '',
+      av: regData.avatar || '\uD83E\uDDD1', photo: regData.photo || '', banner: regData.banner || '',
+      username: regData.username, theme: regData.theme, font: regData.font,
+      size: regData.size, country: regData.country
+    };
+    // Save to localStorage (full, with photo)
+    try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) { console.log('LS full failed, saving lite'); 
+      try { var lite = Object.assign({}, u); lite.photo=''; lite.banner=''; localStorage.setItem('dg_user', JSON.stringify(lite)); } catch(e2){}
+    }
+    currentUserId = regData.username;
+    // Apply profile (wrapped so errors don't stop entry)
+    try { applyFullProfile(u); } catch(e) { console.log('applyProfile err: '+(e.message||'')); }
+    toast('\u00A1Perfil creado '+regData.name+'! \uD83C\uDFAE\uD83E\uDD1F','success');
+    // Save to Supabase (isolated, never blocks)
+    saveProfileToSupabase();
+  } catch(err) {
+    console.log('finishRegister error: '+(err.message||''));
   }
-  setTimeout(function(){ finish(); }, 500);
+  // ALWAYS enter the app
+  setTimeout(function(){ 
+    try { finish(); } catch(e) { 
+      // Hard fallback
+      var lo=document.getElementById('lo'); if(lo) lo.style.display='none';
+      var app=document.getElementById('app'); 
+      if(app){ app.style.display='flex'; app.style.opacity='1'; app.style.zIndex='9999'; }
+      var sc=document.getElementById('sc-chats'); if(sc) sc.classList.add('active');
+    }
+  }, 500);
 }
 
 // Bio counter
@@ -2773,6 +2918,293 @@ document.addEventListener('DOMContentLoaded', function() {
     if (c) c.textContent = this.value.length;
   });
 });
+// ══ DONACIONES (Mercado Pago) ══
+function donar(monto) {
+  // Tu link de Mercado Pago — reemplazá con tu link real de cobro
+  var mpBase = 'https://link.mercadopago.com.ar/deafgaming';
+  var montoFmt = monto.toLocaleString('es-AR');
+  toast('💜 ¡Gracias por apoyar con $' + montoFmt + '!', 'success');
+  // Abrir Mercado Pago con el monto
+  setTimeout(function() {
+    window.open(mpBase, '_blank');
+  }, 800);
+}
+
+// ══ ACTUALIZAR STATS DEL PERFIL ══
+function updateProfileStats() {
+  if (!SB_READY) return;
+  try {
+    // Mark myself online first
+    if (currentUserId) {
+      try { sb.from('profiles').update({ online: true, last_seen: new Date().toISOString() }).eq('id', currentUserId).then(function(){}); } catch(e){}
+    }
+    sb.from('profiles').select('id,online,last_seen').then(function(r) {
+      if (r && r.data) {
+        // Contactos = todos los usuarios menos vos
+        var others = r.data.filter(function(p){ return p.id !== currentUserId; });
+        var contactos = others.length;
+        // Conectados = los que estuvieron activos en los últimos 2 minutos
+        var now = Date.now();
+        var conectados = r.data.filter(function(p){
+          if (!p.online) return false;
+          if (!p.last_seen) return p.online;
+          return (now - new Date(p.last_seen).getTime()) < 120000;
+        }).length;
+        var sf = document.getElementById('statContacts');
+        var so = document.getElementById('statOnline');
+        var sfr = document.getElementById('statFriends');
+        if (sf) sf.textContent = contactos;
+        if (so) so.textContent = conectados;
+        if (sfr) sfr.textContent = contactos;
+      }
+    }).catch(function(e){});
+  } catch(e) {}
+}
+
+// Marcar offline al salir
+window.addEventListener('beforeunload', function() {
+  if (SB_READY && currentUserId) {
+    try { sb.from('profiles').update({ online: false }).eq('id', currentUserId); } catch(e){}
+  }
+});
+
+// Refrescar stats cada 30 segundos
+setInterval(function(){ if (typeof updateProfileStats === 'function') updateProfileStats(); }, 30000);
+// ══════════════════════════════
+// EDITAR PERFIL
+// ══════════════════════════════
+var editPlatforms = [];
+var editRank = '';
+
+function openEditProfile() {
+  var modal = document.getElementById('editProfileModal');
+  if (!modal) return;
+  // Pre-fill with current data
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('dg_user')||'{}'); } catch(e) {}
+  var en = document.getElementById('editName'); if (en) en.value = u.n || '';
+  var eb = document.getElementById('editBio'); if (eb) eb.value = (u.b||'').replace('🤟 ','') || '';
+  var ep = document.getElementById('editPhone'); if (ep) ep.value = (u.p && u.p !== '+1 555') ? u.p : '';
+  var eg = document.getElementById('editGame'); if (eg) eg.value = u.game || '';
+  // Platforms
+  editPlatforms = u.platforms || [];
+  document.querySelectorAll('.pfbtn').forEach(function(b){
+    if (editPlatforms.indexOf(b.dataset.pf) >= 0) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  // Rank
+  editRank = u.rank || '';
+  document.querySelectorAll('.rkbtn').forEach(function(b){
+    if (b.dataset.rk === editRank) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  // Load current photo/banner into previews
+  editPhotoData = u.photo || '';
+  editBannerData = u.banner || '';
+  var avPrev = document.getElementById('editAvatarPreview');
+  if (avPrev) {
+    if (u.photo) { avPrev.textContent=''; avPrev.style.backgroundImage='url('+u.photo+')'; }
+    else { avPrev.style.backgroundImage=''; avPrev.textContent = u.av || '🧑'; }
+  }
+  var bnPrev = document.getElementById('editBannerPreview');
+  if (bnPrev) {
+    if (u.banner) { bnPrev.textContent=''; bnPrev.style.backgroundImage='url('+u.banner+')'; }
+    else { bnPrev.style.backgroundImage=''; bnPrev.textContent='Sin banner'; }
+  }
+  modal.style.display = 'block';
+}
+
+function closeEditProfile() {
+  var modal = document.getElementById('editProfileModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function toggleEditPlatform(pf, btn) {
+  var i = editPlatforms.indexOf(pf);
+  if (i >= 0) { editPlatforms.splice(i,1); btn.classList.remove('active'); }
+  else { editPlatforms.push(pf); btn.classList.add('active'); }
+}
+
+function setEditRank(rk, btn) {
+  editRank = rk;
+  document.querySelectorAll('.rkbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function saveEditProfile() {
+  var name = ((document.getElementById('editName')||{}).value||'').trim() || 'Gamer';
+  var bio = ((document.getElementById('editBio')||{}).value||'').trim() || 'Deaf Gamer';
+  var phone = ((document.getElementById('editPhone')||{}).value||'').trim();
+  var game = ((document.getElementById('editGame')||{}).value||'').trim();
+  // Load current, update fields
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('dg_user')||'{}'); } catch(e) {}
+  u.n = name;
+  u.b = bio.indexOf('🤟') === 0 ? bio : '🤟 ' + bio;
+  u.p = phone || '';
+  u.game = game;
+  u.platforms = editPlatforms.slice();
+  u.rank = editRank;
+  if (editPhotoData) u.photo = editPhotoData;
+  if (editBannerData) u.banner = editBannerData;
+  try { localStorage.setItem('dg_user', JSON.stringify(u)); } catch(e) {
+    try { var lite=Object.assign({},u); lite.photo=''; lite.banner=''; localStorage.setItem('dg_user',JSON.stringify(lite)); } catch(e2){}
+  }
+  // Reflect in profile immediately
+  reflectProfile(u);
+  // Save to Supabase
+  if (SB_READY && currentUserId) {
+    try {
+      sb.from('profiles').update({
+        name: name,
+        bio: u.b,
+        phone: phone,
+        rank: editRank,
+        platforms: editPlatforms
+      }).eq('id', currentUserId).then(function(){});
+    } catch(e) {}
+  }
+  closeEditProfile();
+  toast('✅ Perfil actualizado!','success');
+}
+
+function reflectProfile(u) {
+  // Photo
+  if (u.photo) {
+    var prav = document.getElementById('prav');
+    if (prav) { prav.textContent=''; prav.style.backgroundImage='url('+u.photo+')'; prav.style.backgroundSize='cover'; prav.style.backgroundPosition='center'; }
+  }
+  // Banner
+  if (u.banner) {
+    var bImg = document.getElementById('bannerImg');
+    if (bImg) { bImg.src = u.banner; bImg.style.display='block'; }
+  }
+  // Name
+  var pn = document.getElementById('pname2'); if (pn) pn.textContent = u.n || 'Tú';
+  var en = document.getElementById('e-name'); if (en) en.textContent = u.n || '';
+  // Bio
+  var pb = document.getElementById('pbio2'); if (pb) pb.textContent = u.b || '🤟 Deaf Gamer';
+  // Phone
+  var pp = document.getElementById('pphone'); if (pp) pp.textContent = u.p || '+1 555';
+  // Rank
+  if (u.rank) {
+    var rw = document.getElementById('profRankWrap');
+    var pr = document.getElementById('profRank');
+    if (rw && pr) { pr.textContent = u.rank; rw.style.display = 'block'; }
+  } else {
+    var rw2 = document.getElementById('profRankWrap'); if (rw2) rw2.style.display = 'none';
+  }
+  // Game
+  if (u.game) {
+    var gw = document.getElementById('profGameWrap');
+    var pg = document.getElementById('profGame');
+    if (gw && pg) { pg.textContent = u.game; gw.style.display = 'block'; }
+  } else {
+    var gw2 = document.getElementById('profGameWrap'); if (gw2) gw2.style.display = 'none';
+  }
+  // Platforms
+  if (u.platforms && u.platforms.length > 0) {
+    var pw = document.getElementById('profPlatformsWrap');
+    var pp2 = document.getElementById('profPlatforms');
+    if (pw && pp2) {
+      pp2.innerHTML = '';
+      u.platforms.forEach(function(pf){
+        var chip = document.createElement('div');
+        chip.style.cssText = 'background:rgba(0,245,255,.1);border:1px solid rgba(0,245,255,.3);border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--c);';
+        chip.textContent = pf;
+        pp2.appendChild(chip);
+      });
+      pw.style.display = 'block';
+    }
+  } else {
+    var pw2 = document.getElementById('profPlatformsWrap'); if (pw2) pw2.style.display = 'none';
+  }
+}
+
+// Reflect profile on app load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function(){
+    try {
+      var u = JSON.parse(localStorage.getItem('dg_user')||'null');
+      if (u) reflectProfile(u);
+    } catch(e) {}
+  }, 1200);
+});
+// ══ OCULTAR/MOSTRAR NÚMERO ══
+var phoneVisible = false;
+var realPhone = '';
+
+function togglePhoneVisibility() {
+  var span = document.getElementById('pphone');
+  var btn = document.getElementById('phoneToggleBtn');
+  if (!span || !btn) return;
+  // Get real phone from storage
+  if (!realPhone) {
+    try { var u = JSON.parse(localStorage.getItem('dg_user')||'{}'); realPhone = u.p || ''; } catch(e) {}
+  }
+  phoneVisible = !phoneVisible;
+  if (phoneVisible) {
+    span.textContent = realPhone || 'Sin número';
+    btn.innerHTML = '🙈 Ocultar';
+    // Save visibility preference to Supabase so others can see
+    if (SB_READY && currentUserId) {
+      try { sb.from('profiles').update({ phone_public: true }).eq('id', currentUserId).then(function(){}); } catch(e){}
+    }
+    toast('📱 Número visible para todos','info');
+  } else {
+    span.textContent = '••• ••• ••••';
+    btn.innerHTML = '👁️ Mostrar';
+    if (SB_READY && currentUserId) {
+      try { sb.from('profiles').update({ phone_public: false }).eq('id', currentUserId).then(function(){}); } catch(e){}
+    }
+    toast('🙈 Número oculto','info');
+  }
+}
+
+// Initialize phone as hidden on profile load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function(){
+    var span = document.getElementById('pphone');
+    if (span) {
+      try { var u = JSON.parse(localStorage.getItem('dg_user')||'{}'); realPhone = u.p || ''; } catch(e) {}
+      span.textContent = '••• ••• ••••';
+      phoneVisible = false;
+    }
+  }, 1300);
+});
+// ══ FOTO/BANNER EN EDITAR PERFIL ══
+var editPhotoData = '';
+var editBannerData = '';
+
+function handleEditPhoto(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    editPhotoData = ev.target.result;
+    var prev = document.getElementById('editAvatarPreview');
+    if (prev) { prev.textContent=''; prev.style.backgroundImage='url('+ev.target.result+')'; }
+    toast('📷 Foto cargada','success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleEditBanner(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    editBannerData = ev.target.result;
+    var prev = document.getElementById('editBannerPreview');
+    if (prev) {
+      if (file.type.indexOf('video') === 0) {
+        prev.innerHTML = '<video src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover;" muted loop autoplay></video>';
+      } else {
+        prev.textContent=''; prev.style.backgroundImage='url('+ev.target.result+')';
+      }
+    }
+    toast('🖼️ Banner cargado','success');
+  };
+  reader.readAsDataURL(file);
+}
 </script>
 
 <!-- SUPABASE SETUP MODAL -->
@@ -2801,5 +3233,77 @@ document.addEventListener('DOMContentLoaded', function() {
     <button onclick="hideSBSetup()" style="width:100%;padding:14px;margin-top:10px;border:none;border-radius:14px;cursor:pointer;font-size:14px;font-weight:600;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);color:var(--c);-webkit-appearance:none;">Cerrar</button>
   </div>
 </div>
+
+<!-- ══ MODAL EDITAR PERFIL ══ -->
+<div id="editProfileModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto;padding:20px;box-sizing:border-box;">
+  <div style="max-width:480px;margin:40px auto;background:linear-gradient(135deg,#0a0e1a,#120a1f);border:1px solid rgba(0,245,255,.25);border-radius:24px;padding:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:20px;font-weight:900;color:var(--tx);">✏️ Editar perfil</div>
+      <button onclick="closeEditProfile()" style="background:rgba(255,255,255,.08);border:none;border-radius:50%;width:36px;height:36px;color:var(--tx);font-size:20px;cursor:pointer;-webkit-appearance:none;">×</button>
+    </div>
+
+    <!-- FOTO DE PERFIL -->
+    <div style="text-align:center;margin-bottom:18px;">
+      <div id="editAvatarPreview" style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 10px;border:3px solid rgba(0,245,255,.3);overflow:hidden;background-size:cover;background-position:center;">🧑</div>
+      <button onclick="document.getElementById('editPhotoInput').click()" style="background:rgba(0,245,255,.1);border:1.5px solid var(--c);border-radius:99px;padding:8px 18px;color:var(--c);font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;">📷 Cambiar foto</button>
+      <input type="file" id="editPhotoInput" accept="image/*" style="display:none;" onchange="handleEditPhoto(event)">
+    </div>
+
+    <!-- BANNER -->
+    <div style="margin-bottom:18px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:6px;">🌅 Banner de portada</div>
+      <div id="editBannerPreview" style="width:100%;height:80px;border-radius:14px;background:linear-gradient(135deg,var(--bc),var(--b2));display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--tm);overflow:hidden;background-size:cover;background-position:center;margin-bottom:8px;">Sin banner</div>
+      <button onclick="document.getElementById('editBannerInput').click()" style="width:100%;background:rgba(191,0,255,.1);border:1.5px solid var(--p);border-radius:12px;padding:11px;color:var(--p);font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;">🖼️ Cambiar banner (foto/video)</button>
+      <input type="file" id="editBannerInput" accept="image/*,video/*" style="display:none;" onchange="handleEditBanner(event)">
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:6px;">📝 Nombre</div>
+      <input id="editName" class="inp" type="text" placeholder="Tu nombre" style="margin:0;">
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:6px;">✍️ Biografía</div>
+      <textarea id="editBio" maxlength="150" placeholder="Contá algo sobre vos" style="width:100%;background:rgba(0,245,255,.05);border:1.5px solid rgba(0,245,255,.2);border-radius:14px;padding:13px;color:var(--tx);font-size:14px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;-webkit-user-select:text;user-select:text;"></textarea>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:6px;">📱 Número (opcional)</div>
+      <input id="editPhone" class="inp" type="tel" inputmode="tel" placeholder="+54 9 11..." style="margin:0;">
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:8px;">🎮 Mis plataformas (tocá las tuyas)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="toggleEditPlatform('🖥️ PC',this)" class="pfbtn" data-pf="🖥️ PC">🖥️ PC</button>
+        <button onclick="toggleEditPlatform('💻 Notebook',this)" class="pfbtn" data-pf="💻 Notebook">💻 Notebook</button>
+        <button onclick="toggleEditPlatform('🎮 Xbox',this)" class="pfbtn" data-pf="🎮 Xbox">🎮 Xbox</button>
+        <button onclick="toggleEditPlatform('🎮 PlayStation',this)" class="pfbtn" data-pf="🎮 PlayStation">🎮 PlayStation</button>
+        <button onclick="toggleEditPlatform('🕹️ Nintendo',this)" class="pfbtn" data-pf="🕹️ Nintendo">🕹️ Nintendo</button>
+        <button onclick="toggleEditPlatform('📱 Mobile',this)" class="pfbtn" data-pf="📱 Mobile">📱 Mobile</button>
+        <button onclick="toggleEditPlatform('🥽 VR',this)" class="pfbtn" data-pf="🥽 VR">🥽 VR</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:6px;">🎯 Juego favorito</div>
+      <input id="editGame" class="inp" type="text" placeholder="Ej: Fortnite, FIFA, Valorant..." style="margin:0;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;color:var(--c);font-weight:700;margin-bottom:8px;">🏆 Mi rango</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="setEditRank('🥉 Bronce',this)" class="rkbtn" data-rk="🥉 Bronce">🥉 Bronce</button>
+        <button onclick="setEditRank('🥈 Plata',this)" class="rkbtn" data-rk="🥈 Plata">🥈 Plata</button>
+        <button onclick="setEditRank('🥇 Oro',this)" class="rkbtn" data-rk="🥇 Oro">🥇 Oro</button>
+        <button onclick="setEditRank('💎 Diamante',this)" class="rkbtn" data-rk="💎 Diamante">💎 Diamante</button>
+        <button onclick="setEditRank('👑 Maestro',this)" class="rkbtn" data-rk="👑 Maestro">👑 Maestro</button>
+      </div>
+    </div>
+
+    <button class="btn" onclick="saveEditProfile()" style="margin:0;">💾 Guardar cambios</button>
+  </div>
+</div>
+
 </body>
 </html>
