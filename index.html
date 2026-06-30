@@ -437,6 +437,10 @@ body.font-serif *{font-family:Georgia,serif!important;}
   padding:0 6px;flex-shrink:0;
 }
 
+
+@keyframes callPulse{ 0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(0,245,255,.5); } 50%{ transform:scale(1.05); box-shadow:0 0 0 20px rgba(0,245,255,0); } }
+@keyframes callBounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
+
 </style>
 
 <!-- Supabase SDK -->
@@ -2764,10 +2768,11 @@ async function startRealVideoCall() {
     await peerConn.setLocalDescription(offer);
     await sb.from('calls').insert({ from_id:currentUserId, to_id:currentChatUserId, type:'offer', data:JSON.stringify(offer), created_at:new Date().toISOString() });
     // Show VC screen with real video
-    openVC();
+    var calleeName = document.getElementById('cd-name') ? document.getElementById('cd-name').textContent : 'Llamada';
+    showVideoCallScreen(calleeName);
     var lv = document.getElementById('vcLocal');
     if (lv) { lv.srcObject = localStream; lv.play(); }
-    toast('📹 Llamada iniciada — esperando respuesta...','info');
+    toast('📹 Llamando — esperando que acepte...','info');
   } catch(e) {
     toast('Error de cámara: '+e.message,'error');
     openVC(); // show UI anyway
@@ -3517,6 +3522,163 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e){}
   }, 1500);
 });
+// ══════════════════════════════════════
+// SISTEMA DE VIDEOLLAMADAS WEBRTC COMPLETO
+// ══════════════════════════════════════
+var callChannel = null;
+var incomingOffer = null;
+var incomingFromId = null;
+var incomingFromName = '';
+var callPollInterval = null;
+var lastCallCheck = new Date().toISOString();
+
+// Escuchar llamadas entrantes (se ejecuta al entrar al app)
+function startCallListener() {
+  if (!SB_READY || !currentUserId) return;
+  // Realtime para llamadas dirigidas a mí
+  try {
+    if (callChannel) sb.removeChannel(callChannel);
+    callChannel = sb.channel('calls-' + currentUserId)
+      .on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'calls',
+        filter: 'to_id=eq.' + currentUserId
+      }, function(payload) {
+        handleCallSignal(payload.new);
+      })
+      .subscribe();
+    console.log('📞 Escuchando llamadas...');
+  } catch(e) { console.log('Call listener error:', e.message); }
+}
+
+// Procesar señales de llamada (offer, answer, ice)
+async function handleCallSignal(signal) {
+  if (signal.type === 'offer') {
+    // Llamada entrante!
+    incomingOffer = JSON.parse(signal.data);
+    incomingFromId = signal.from_id;
+    // Buscar nombre del que llama
+    try {
+      var r = await sb.from('profiles').select('name,avatar').eq('id', signal.from_id).maybeSingle();
+      incomingFromName = (r.data && r.data.name) || 'Alguien';
+      var av = (r.data && r.data.avatar) || '🧑';
+      showIncomingCall(incomingFromName, av);
+    } catch(e) {
+      showIncomingCall('Alguien', '🧑');
+    }
+  } else if (signal.type === 'answer') {
+    // El otro aceptó mi llamada
+    if (peerConn) {
+      try { await peerConn.setRemoteDescription(JSON.parse(signal.data)); } catch(e){}
+    }
+  } else if (signal.type === 'ice') {
+    // Candidato ICE
+    if (peerConn) {
+      try { await peerConn.addIceCandidate(JSON.parse(signal.data)); } catch(e){}
+    }
+  }
+}
+
+// Mostrar pantalla de llamada entrante
+function showIncomingCall(name, avatar) {
+  var existing = document.getElementById('incomingCallModal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'incomingCallModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:11000;background:linear-gradient(135deg,#0a0e1a,#120a1f);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;';
+  modal.innerHTML =
+    '<div style="font-size:14px;color:var(--c);margin-bottom:20px;animation:pulse 1.5s infinite;">📹 Videollamada entrante...</div>' +
+    '<div style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:20px;animation:callPulse 1.5s ease-in-out infinite;">' + avatar + '</div>' +
+    '<div style="font-size:24px;font-weight:900;color:var(--tx);margin-bottom:8px;">' + name + '</div>' +
+    '<div style="font-size:14px;color:var(--tm);margin-bottom:50px;">te está llamando</div>' +
+    '<div style="display:flex;gap:40px;">' +
+      '<div style="text-align:center;">' +
+        '<button onclick="rejectIncomingCall()" style="width:70px;height:70px;border-radius:50%;background:#ff3b30;border:none;font-size:32px;cursor:pointer;-webkit-appearance:none;margin-bottom:8px;">📵</button>' +
+        '<div style="font-size:12px;color:var(--tm);">Rechazar</div>' +
+      '</div>' +
+      '<div style="text-align:center;">' +
+        '<button onclick="acceptIncomingCall()" style="width:70px;height:70px;border-radius:50%;background:#00ff88;border:none;font-size:32px;cursor:pointer;-webkit-appearance:none;margin-bottom:8px;animation:callBounce 1s infinite;">📹</button>' +
+        '<div style="font-size:12px;color:var(--tm);">Aceptar</div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+  // Vibrar si se puede
+  if (navigator.vibrate) navigator.vibrate([500,300,500,300,500]);
+}
+
+// Aceptar la llamada entrante
+async function acceptIncomingCall() {
+  var modal = document.getElementById('incomingCallModal');
+  if (modal) modal.remove();
+  if (navigator.vibrate) navigator.vibrate(0);
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    peerConn = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    localStream.getTracks().forEach(function(t){ peerConn.addTrack(t, localStream); });
+    peerConn.ontrack = function(e) {
+      var rv = document.getElementById('vcRemote'); if(rv){ rv.srcObject = e.streams[0]; rv.play(); }
+    };
+    peerConn.onicecandidate = function(e) {
+      if(e.candidate) {
+        try { sb.from('calls').insert({ from_id:currentUserId, to_id:incomingFromId, type:'ice', data:JSON.stringify(e.candidate), created_at:new Date().toISOString() }); } catch(x){}
+      }
+    };
+    await peerConn.setRemoteDescription(incomingOffer);
+    var answer = await peerConn.createAnswer();
+    await peerConn.setLocalDescription(answer);
+    await sb.from('calls').insert({ from_id:currentUserId, to_id:incomingFromId, type:'answer', data:JSON.stringify(answer), created_at:new Date().toISOString() });
+    // Mostrar pantalla de video
+    showVideoCallScreen(incomingFromName);
+    var lv = document.getElementById('vcLocal');
+    if (lv) { lv.srcObject = localStream; lv.play(); }
+  } catch(e) {
+    toast('Error al aceptar: ' + e.message, 'error');
+  }
+}
+
+function rejectIncomingCall() {
+  var modal = document.getElementById('incomingCallModal');
+  if (modal) modal.remove();
+  if (navigator.vibrate) navigator.vibrate(0);
+  incomingOffer = null;
+  incomingFromId = null;
+}
+
+// Pantalla de videollamada activa
+function showVideoCallScreen(name) {
+  var existing = document.getElementById('activeCallModal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'activeCallModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:11000;background:#000;display:flex;flex-direction:column;';
+  modal.innerHTML =
+    '<video id="vcRemote" autoplay playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111;"></video>' +
+    '<video id="vcLocal" autoplay playsinline muted style="position:absolute;top:20px;right:16px;width:100px;height:140px;border-radius:14px;object-fit:cover;border:2px solid var(--c);z-index:2;"></video>' +
+    '<div style="position:absolute;top:20px;left:16px;color:#fff;font-size:16px;font-weight:700;z-index:2;text-shadow:0 1px 4px rgba(0,0,0,.8);">' + (name||'Llamada') + '</div>' +
+    '<div style="position:absolute;bottom:40px;left:0;right:0;display:flex;justify-content:center;gap:24px;z-index:2;">' +
+      '<button onclick="toggleCallMute()" id="muteBtn" style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);border:none;font-size:26px;cursor:pointer;-webkit-appearance:none;">🎤</button>' +
+      '<button onclick="endActiveCall()" style="width:70px;height:70px;border-radius:50%;background:#ff3b30;border:none;font-size:32px;cursor:pointer;-webkit-appearance:none;">📵</button>' +
+      '<button onclick="toggleCallCamera()" style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);border:none;font-size:26px;cursor:pointer;-webkit-appearance:none;">📷</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function endActiveCall() {
+  if (peerConn) { try { peerConn.close(); } catch(e){} peerConn = null; }
+  if (localStream) { localStream.getTracks().forEach(function(t){ t.stop(); }); localStream = null; }
+  var m = document.getElementById('activeCallModal'); if (m) m.remove();
+}
+
+function toggleCallMute() {
+  if (!localStream) return;
+  var a = localStream.getAudioTracks()[0];
+  if (a) { a.enabled = !a.enabled; var b=document.getElementById('muteBtn'); if(b) b.textContent = a.enabled?'🎤':'🔇'; }
+}
+
+function toggleCallCamera() {
+  if (!localStream) return;
+  var v = localStream.getVideoTracks()[0];
+  if (v) v.enabled = !v.enabled;
+}
 </script>
 
 <!-- SUPABASE SETUP MODAL -->
